@@ -44,28 +44,28 @@ def add_sub(id, is_rassylka, subjects, is_choosing):
     return
 
 
-def write_message_with_menu(sender, message):
+def write_message_with_menu(sender, message):  # функция отправки сообщения + высвечивание кнопки перехода в меню
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id(), 'keyboard': keyboard_send_menu.get_keyboard()})
 
 
-def write_message(sender, message):
+def write_message(sender, message):  # функция отправки сообщения message пользователю sender
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id()})
 
 
-def send_menu(sender):
+def send_menu(sender):  # стандартное меню
     auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка для меню',
                                   'random_id': get_random_id(), 'keyboard': keyboard_menu.get_keyboard()})
 
 
-def choose_subjects(sender):
+def choose_subjects(sender):  # меню добавления предметов для рассылки
     auth.method('messages.send', {'user_id': sender, 'message': 'Отлично!\n Выберите предмет, по которому'
                                                                 ' хотите получать уведомления.',
                                   'random_id': get_random_id(), 'keyboard': keyboard_choose.get_keyboard()})
 
 
-def notifications(sender, message):
+def notifications(sender, message):  # меню управления уведомлениями
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id(), 'keyboard': keyboard_notif.get_keyboard()})
 
