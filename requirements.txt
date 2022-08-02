@@ -3,3 +3,4 @@ vk_api==11.9.9
 gunicorn==20.1.0
 dj-database-url==1.0.0
 psycopg2==2.8.6
+whitenoise-6.2.0
