@@ -1,0 +1,1 @@
+web: gunicorn olympBot.wsgi --log-file -
