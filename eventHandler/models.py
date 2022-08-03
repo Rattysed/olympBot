@@ -32,3 +32,5 @@ class Events(models.Model):  # События
         verbose_name = 'События'
         verbose_name_plural = 'События'
         ordering = ['level']
+
+
