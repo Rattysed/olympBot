@@ -13,7 +13,7 @@ class SubjectsAndProfilesAdmin(admin.ModelAdmin):
 
 
 class EventsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'notify_date', 'period', 'level', 'description')
+    list_display = ('id', 'name', 'notify_date', 'period', 'level', 'event_url', 'description')
     search_fields = ('name',)
 
 

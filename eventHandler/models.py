@@ -37,7 +37,7 @@ class Events(models.Model):  # События
     profile = models.ManyToManyField(Profiles, blank=True)
     event_grade = models.IntegerField('Класс олимпиады', null=True)
     next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
-
+    event_url = models.SlugField(max_length=160, unique=True, default='https://')
     description = models.TextField('Доп. Информация', blank=True)
 
     def __str__(self):
