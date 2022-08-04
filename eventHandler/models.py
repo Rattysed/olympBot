@@ -13,6 +13,18 @@ class Subjects(models.Model):  # предметы
         ordering = ['name']
 
 
+class Profiles(models.Model):  # предметы
+    name = models.CharField('Название', max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
+        ordering = ['name']
+
+
 class Events(models.Model):  # События
     name = models.CharField('Название', max_length=100)
     notify_date = models.DateField('Дата напоминания', blank=True)
@@ -20,9 +32,11 @@ class Events(models.Model):  # События
     level = models.PositiveSmallIntegerField(
         'Уровень олимпиады', default=2, help_text='Значение от 1 до 3'
     )
-
-    subject = models.ForeignKey(Subjects, on_delete=models.SET_NULL, null=True)
-    next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    event_priority = models.IntegerField('Насколько это событие отборочное', null=True)
+    subject = models.ManyToManyField(Subjects, blank=True)
+    profile = models.ManyToManyField(Profiles, blank=True)
+    event_grade = models.IntegerField('Класс олимпиады', null=True)
+    next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
 
     description = models.TextField('Доп. Информация', blank=True)
 
@@ -36,11 +50,12 @@ class Events(models.Model):  # События
 
 
 class User(models.Model):
-    vk_id = models.CharField('ВКонтакте', max_length=20)
-    tg_id = models.CharField('Телеграм', max_length=50)
+    vk_id = models.CharField('ВКонтакте', max_length=20, blank=True)
+    tg_id = models.CharField('Телеграм', max_length=50, blank=True)
     is_rassylka = models.BooleanField('Рассылка', default=False)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки')
+    events = models.ManyToManyField(Events)
 
     def __str__(self):
         return f"{self.vk_id} - {self.tg_id}"
@@ -48,11 +63,3 @@ class User(models.Model):
     class Meta:
         verbose_name = 'Пользователи'
         verbose_name_plural = 'Пользователи'
-
-
-class OlympsToUser(models.Model):
-    event_id = models.ForeignKey(Events, on_delete=models.SET_NULL, null=True)
-    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return f"{self.user_id} - {self.event_id}"
