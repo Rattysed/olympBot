@@ -1,6 +1,9 @@
 from django import forms
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class EventForm(forms.Form):
     name = forms.CharField(label='Название олимпиады')
     notify_date = forms.DateField(label='Дата напоминалки')
@@ -11,5 +14,4 @@ class EventForm(forms.Form):
     subject = forms.MultipleChoiceField(label='Предмет олимпиады')
     profile = forms.MultipleChoiceField(label='Профиль олимпиады')
     nextEvent = forms.ChoiceField(label='Следующий этап олимпиады')
-    event_url = forms.URLField(label='Ссылка на ивент')
     description = forms.CharField(label='Описание', widget=forms.Textarea)

@@ -6,9 +6,22 @@
 </head>
 <body>
     <h1>Создать событие</h1>
+
+    <form method="POST">
+        {% csrf_token %}
     <table>
         {{ form }}
     </table>
     <input type="submit" value="Send" >
+</form>
+
+<script>
+  $(function () {
+    $("#datepicker1").datepicker({
+      format: 'DD/MM/YYYY',
+    });
+  });
+</script>
+
 </body>
 </html>
