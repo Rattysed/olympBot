@@ -14,4 +14,5 @@ class EventForm(forms.Form):
     subject = forms.MultipleChoiceField(label='Предмет олимпиады')
     profile = forms.MultipleChoiceField(label='Профиль олимпиады')
     nextEvent = forms.ChoiceField(label='Следующий этап олимпиады')
+    event_url = forms.URLField(label='Ссылка на ивент')
     description = forms.CharField(label='Описание', widget=forms.Textarea)
