@@ -1,7 +1,6 @@
 import os
 
 
-
 def run_server(state=0):
     if state:
         os.system('python manage.py makemigrations')
