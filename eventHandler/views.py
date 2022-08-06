@@ -22,7 +22,6 @@ def vk_bot(request):
                 sender = data['object']['message']['from_id']
 
                 write_message(sender, 'Привет', auth)
-                return HttpResponse('ok', content_type="text/plain", status=200)
     else:
         return HttpResponse('poshel nahui')
 
