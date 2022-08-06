@@ -1,6 +1,8 @@
-import vk_api
+import vk
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from .vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 
 keyboard_menu = VkKeyboard(one_time=True)
 keyboard_menu.add_button('Включить рассылку', color=VkKeyboardColor.POSITIVE)
@@ -33,6 +35,7 @@ def write_message_with_menu(sender, message, auth):  # функция отпра
 def write_message(sender, message, auth):  # функция отправки сообщения message пользователю sender
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id()})
+    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def send_menu(sender, auth):  # стандартное меню
