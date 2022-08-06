@@ -55,7 +55,7 @@ class User(models.Model):
     is_rassylka = models.BooleanField('Рассылка', default=True)
     grade = models.IntegerField('Класс пользователя', default=11)
     is_subscription = models.BooleanField('Подписка', default=False)
-    end_of_subscription = models.DateField('Дата окончания подписки')
+    end_of_subscription = models.DateField('Дата окончания подписки', null=True)
     events = models.ManyToManyField(Events)
 
     def __str__(self):

@@ -7,6 +7,7 @@ from .bot_handler import make_distribution
 from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 from .vk_bot.vk_functions import write_message
 import vk_api
+from .db_controller import is_user_in_database, create_new_vk_user
 
 
 @csrf_exempt
@@ -20,12 +21,15 @@ def vk_bot(request):
             elif data['type'] == 'message_new':
                 print(data)
                 auth = vk_api.VkApi(token=TOKEN)
-                sender = data['object']['message']['from_id']
+                sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
 
                 if body.lower() == "начать" or "привет" in body.lower() or body.lower() == "меню":
-                    pass
-
+                    print((sender, ))
+                    if not is_user_in_database(vk_id=sender):
+                        create_new_vk_user(sender, 11)
+                    else:
+                        print('Пошел нахуй')
 
             else:
                 HttpResponse('ok', content_type='text/plain', status=200)
