@@ -3,6 +3,10 @@ from .forms import EventForm
 from .models import Events
 
 
+def vk_bot(request):
+    pass
+
+
 def test(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/admin")
