@@ -20,4 +20,5 @@ from eventHandler import views
 urlpatterns = [
     path('test', views.test),
     path('admin/', admin.site.urls),
+    path('bt', views.bot_test)
 ]

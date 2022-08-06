@@ -53,7 +53,7 @@ class User(models.Model):
     vk_id = models.CharField('ВКонтакте', max_length=20, blank=True)
     tg_id = models.CharField('Телеграм', max_length=50, blank=True)
     is_rassylka = models.BooleanField('Рассылка', default=True)
-    grade = models.IntegerField('Класс пользователя')
+    grade = models.IntegerField('Класс пользователя', default=11)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки')
     events = models.ManyToManyField(Events)

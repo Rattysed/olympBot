@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from .forms import EventForm
 from .models import Events
+from .bot_handler import make_distribution
 
 
 def test(request):
@@ -31,7 +32,7 @@ def test(request):
                 event.event_url = eventForm.cleaned_data['event_url']
                 event.description = eventForm.cleaned_data['description']
                 event.save()
-            return HttpResponse('Хуй соси')
+            return HttpResponse('Добавили')
             pass
         else:
 
@@ -41,3 +42,8 @@ def test(request):
     eventForm = EventForm()
 
     return render(request, 'test.html', {'form': eventForm})
+
+
+def bot_test(request):
+    make_distribution()
+    return HttpResponse('С кайфом')
