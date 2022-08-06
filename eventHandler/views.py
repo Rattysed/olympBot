@@ -21,8 +21,12 @@ def vk_bot(request):
                 print(data)
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = data['object']['message']['from_id']
+                body = data['object']['message']['text']
 
-                write_message(sender, 'Привет', auth)
+                if body.lower() == "начать" or "привет" in body.lower() or body.lower() == "меню":
+                    pass
+
+
             else:
                 HttpResponse('ok', content_type='text/plain', status=200)
 
