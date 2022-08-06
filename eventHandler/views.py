@@ -16,14 +16,16 @@ def vk_bot(request):
             if data['type'] == 'confirmation':
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
-            if data['type'] == 'message_new':
+            elif data['type'] == 'message_new':
                 print(data)
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = data['object']['message']['from_id']
 
                 write_message(sender, 'Привет', auth)
-    else:
-        return HttpResponse('poshel nahui')
+            else:
+                HttpResponse('ok', content_type='text/plain', status=200)
+
+    return HttpResponse('ok', content_type='text/plain', status=200)
 
 
 def test(request):
