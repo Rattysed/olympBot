@@ -11,5 +11,6 @@ def make_distribution():
         for user in users:
             tg_users.add(user.tg_id)
             vk_users.add(user.vk_id)
+        message = f"""Олимпиада {event.name} для {str(event.event_grade)} класса"""
 
 
