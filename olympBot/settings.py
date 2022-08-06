@@ -29,7 +29,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ['DEBUG'] == 'True')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'robotolev.leo-land.ru']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'robotolev.leo-land.ru',
+    'd28e-2a02-2698-7c2b-1d54-85f5-8e76-7be1-e36b.eu.ngrok.io'
+]
 
 # Application definition
 
