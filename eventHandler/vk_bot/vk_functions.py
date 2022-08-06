@@ -1,6 +1,7 @@
-import vk_api
+import vk
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from .vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 
 keyboard_menu = VkKeyboard(one_time=True)
 keyboard_menu.add_button('Включить рассылку', color=VkKeyboardColor.POSITIVE)

@@ -1,10 +1,30 @@
+import json
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
 from .models import Events
+from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
+from .vk_bot.vk_functions import write_message
+import vk_api
 
 
+@csrf_exempt
 def vk_bot(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if data['secret'] == SECRET_KEY:
+            if data['type'] == 'confirmation':
+                return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
+
+            if data['type'] == 'message_new':
+                print(data)
+                auth = vk_api.VkApi(token=TOKEN)
+                sender = data['object']['message']['from_id']
+
+                write_message(sender, 'Привет', auth)
+                return HttpResponse('ok', content_type="text/plain", status=200)
+    else:
+        return HttpResponse('poshel nahui')
 
 
 def test(request):

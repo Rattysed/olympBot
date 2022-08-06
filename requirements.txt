@@ -1,5 +1,6 @@
 Django==3.2.14
 vk_api==11.9.9
+vk==3.0
 whitenoise==6.2.0
 python-dotenv==0.20.0
 APScheduler==3.9.1
