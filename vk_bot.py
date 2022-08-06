@@ -12,10 +12,6 @@ keyboard_menu.add_button('Отключить рассылку', color=VkKeyboard
 keyboard_menu.add_line()
 keyboard_menu.add_button('Мои уведомления', color=VkKeyboardColor.PRIMARY)
 
-# TODO: показ всех доступных событий
-# TODO: keyboard_menu.add_line()
-# TODO: keyboard_menu.add_button('События')
-
 keyboard_send_menu = VkKeyboard(one_time=True)
 keyboard_send_menu.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
