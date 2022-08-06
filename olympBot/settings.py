@@ -20,6 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 
+ngrok = '...'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -33,7 +35,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'robotolev.leo-land.ru',
-    'd28e-2a02-2698-7c2b-1d54-85f5-8e76-7be1-e36b.eu.ngrok.io'
+    ngrok
 ]
 
 # Application definition
