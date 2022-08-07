@@ -2,10 +2,11 @@ import json
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
-from .models import Events
+from .models import Events, User
 from .bot_handler import make_distribution
 from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
-from .vk_bot.vk_functions import write_message
+from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
+    add_to_local_data, local_data
 import vk_api
 from .db_controller import is_user_in_database, create_new_vk_user
 
@@ -15,21 +16,41 @@ def vk_bot(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         if data['secret'] == SECRET_KEY:
+            print(data['type'])
+            print(data)
             if data['type'] == 'confirmation':
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
-                print(data)
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
 
-                if body.lower() == "начать" or "привет" in body.lower() or body.lower() == "меню":
-                    print((sender, ))
-                    if not is_user_in_database(vk_id=sender):
-                        create_new_vk_user(sender, 11)
-                    else:
-                        print('Пошел нахуй')
+                if sender not in local_data:
+                    add_to_local_data(sender, 0)
+                    ask_about_grades(sender, auth)
+                    local_data[sender]['question'] = 1
+
+                elif local_data[sender]['question'] == 1\
+                        and not is_user_in_database(vk_id=sender):
+                    if body.lower() in ['11', '10', '9', '8']:
+                        create_new_vk_user(sender, int(body.lower()))
+                        local_data[sender]['question'] = 2
+                        send_menu(sender, auth)
+                elif local_data[sender]['question'] == 1\
+                        and is_user_in_database(vk_id=sender):
+                    if body.lower() in ['11', '10', '9', '8']:
+
+                        # TODO изменить класс юзера
+
+                        local_data[sender]['question'] = 2
+                        print('Hullo')
+                        send_menu(sender, auth)
+
+                elif body.lower() == 'включить рассылку':
+                    pass
+                else:
+                    pass
 
             else:
                 HttpResponse('ok', content_type='text/plain', status=200)

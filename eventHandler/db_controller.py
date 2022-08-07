@@ -26,6 +26,7 @@ def is_user_in_database(tg_id='', vk_id=''):
     else:
         return False
 
+
 def create_new_user(grade: int, vk_id='', tg_id=''):
     if vk_id == tg_id == '':
         return AttributeError("Can't create user without any messenger account")
