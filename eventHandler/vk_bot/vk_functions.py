@@ -23,6 +23,8 @@ keyboard_choose.add_line()
 keyboard_choose.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
 keyboard_notif = VkKeyboard(one_time=True)
+keyboard_notif.add_button('Мои рассылки', color=VkKeyboardColor.PRIMARY)
+keyboard_notif.add_line()
 keyboard_notif.add_button('Добавить уведомления', color=VkKeyboardColor.SECONDARY)
 keyboard_notif.add_button('Убрать уведомления', color=VkKeyboardColor.SECONDARY)
 keyboard_notif.add_line()
@@ -67,8 +69,8 @@ def choose_subjects(sender, auth):  # меню добавления предме
     return HttpResponse('ok', content_type="text/plain", status=200)
 
 
-def notifications(sender, message, auth):  # меню управления уведомлениями
-    auth.method('messages.send', {'user_id': sender, 'message': message,
+def notifications(sender, auth):  # меню управления уведомлениями
+    auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка',
                                   'random_id': get_random_id(), 'keyboard': keyboard_notif.get_keyboard()})
     return HttpResponse('ok', content_type="text/plain", status=200)
 

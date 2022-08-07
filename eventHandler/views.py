@@ -6,7 +6,7 @@ from .models import Events, User
 from .bot_handler import make_distribution
 from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
-    add_to_local_data, local_data
+    add_to_local_data, local_data, notifications
 import vk_api
 from .db_controller import is_user_in_database, create_new_vk_user
 
@@ -44,11 +44,13 @@ def vk_bot(request):
                         # TODO изменить класс юзера
 
                         local_data[sender]['question'] = 2
-                        print('Hullo')
                         send_menu(sender, auth)
 
-                elif body.lower() == 'включить рассылку':
-                    pass
+                elif body.lower() == 'управление рассылкой'\
+                        and local_data[sender]['question'] == 2:
+                    notifications(sender, auth)
+                    local_data[sender]['question'] = 3
+                # elif body.lower() == ''
                 else:
                     pass
 
