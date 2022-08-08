@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Subjects(models.Model):  # предметы
+class Subject(models.Model):  # предметы
     name = models.CharField('Название', max_length=50)
 
     def __str__(self):
@@ -13,7 +13,7 @@ class Subjects(models.Model):  # предметы
         ordering = ['name']
 
 
-class Profiles(models.Model):  # предметы
+class Profile(models.Model):  # предметы
     name = models.CharField('Название', max_length=50)
 
     def __str__(self):
@@ -25,7 +25,7 @@ class Profiles(models.Model):  # предметы
         ordering = ['name']
 
 
-class Events(models.Model):  # События
+class Event(models.Model):  # События
     name = models.CharField('Название', max_length=100)
     notify_date = models.DateField('Дата напоминания', blank=True)
     period = models.CharField('Сроки проведения', max_length=50)
@@ -33,8 +33,8 @@ class Events(models.Model):  # События
         'Уровень олимпиады', default=2, help_text='Значение от 1 до 3'
     )
     event_priority = models.IntegerField('Насколько это событие отборочное', null=True)
-    subject = models.ManyToManyField(Subjects, blank=True)
-    profile = models.ManyToManyField(Profiles, blank=True)
+    subject = models.ManyToManyField(Subject, blank=True)
+    profile = models.ManyToManyField(Profile, blank=True)
     event_grade = models.IntegerField('Класс олимпиады', null=True)
     next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     event_url = models.URLField(max_length=160, default='https://')
@@ -56,7 +56,7 @@ class User(models.Model):
     grade = models.IntegerField('Класс пользователя', default=11)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
-    events = models.ManyToManyField(Events)
+    events = models.ManyToManyField(Event)
 
     def __str__(self):
         return f"{self.vk_id} - {self.tg_id}"

@@ -1,19 +1,18 @@
-from eventHandler.models import Events, Subjects, User
 import datetime
 from typing import Union, List
 from django.db.models import QuerySet
-from .models import Events, User, Subjects
+from .models import Event, User, Subject
 
 
 class CollectedData:
-    subject_query: Union[QuerySet, List[Subjects]] = None
-    event_query: Union[QuerySet, List[Events]] = None
+    subject_query: Union[QuerySet, List[Subject]] = None
+    event_query: Union[QuerySet, List[Event]] = None
     subjects: List = []
     events: List = []
 
     def update_data(self):
-        self.event_query = Events.objects.all()
-        self.subject_query = Subjects.objects.all()
+        self.event_query = Event.objects.all()
+        self.subject_query = Subject.objects.all()
         self.subjects = list(self.subject_query)
         self.events = list(self.event_query)
 
@@ -22,22 +21,22 @@ DATA = CollectedData()
 DATA.update_data()
 
 
-def get_all_this_date(date) -> Union[QuerySet, List[Events]]:
-    ev = Events.objects.filter(notify_date=date)
+def get_all_this_date(date) -> Union[QuerySet, List[Event]]:
+    ev = Event.objects.filter(notify_date=date)
     return ev
 
 
-def get_all_today() -> Union[QuerySet, List[Events]]:
+def get_all_today() -> Union[QuerySet, List[Event]]:
     return get_all_this_date(datetime.date.today())
 
 
-def get_subjects() -> Union[QuerySet, List[Events]]:
-    sub = Subjects.objects.all()
+def get_subjects() -> Union[QuerySet, List[Event]]:
+    sub = Subject.objects.all()
     return sub
 
 
-def get_events_by_subject(subject) -> Union[QuerySet, List[Events]]:
-    events = Events.objects.filter(subject=subject)
+def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
+    events = Event.objects.filter(subject=subject)
     return events
 
 
@@ -66,7 +65,7 @@ def get_user(vk_id='', tg_id=''):
     return user
 
 
-def add_events_by_subject(subject: Subjects, user: User):
+def add_events_by_subject(subject: Subject, user: User):
     events = get_events_by_subject(subject)
     for ev in events:
         user.events.add(ev)

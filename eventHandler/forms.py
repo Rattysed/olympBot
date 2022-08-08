@@ -1,5 +1,5 @@
 from django import forms
-from .models import Subjects, Events, Profiles
+from .models import Subject, Event, Profile
 
 
 
@@ -10,9 +10,9 @@ class DateInput(forms.DateInput):
 
 class EventForm(forms.Form):
     blank_choice = (('', '--- Выберите значение ---'),)
-    EVENT_CHOICES = blank_choice + tuple((x.id, x.name) for x in Events.objects.exclude(event_priority=0))
-    SUBJECT_CHOICES = ((x.id, x.name) for x in Subjects.objects.all())
-    PROFILE_CHOICES = ((x.id, x.name) for x in Profiles.objects.all())
+    EVENT_CHOICES = blank_choice + tuple((x.id, x.name) for x in Event.objects.exclude(event_priority=0))
+    SUBJECT_CHOICES = ((x.id, x.name) for x in Subject.objects.all())
+    PROFILE_CHOICES = ((x.id, x.name) for x in Profile.objects.all())
     name = forms.CharField(label='Название олимпиады', widget=forms.TextInput(attrs={'size':80}))
     notify_date = forms.DateField(label='Дата напоминалки', widget=DateInput)
     grades = forms.MultipleChoiceField(label='Выберите класс', widget=forms.CheckboxSelectMultiple,

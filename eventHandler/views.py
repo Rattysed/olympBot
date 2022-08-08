@@ -102,7 +102,7 @@ def test(request):
         if eventForm.is_valid():
             for grade in eventForm.cleaned_data['grades']:
                 grade = int(grade)
-                event = Events()
+                event = Event()
                 event.name = eventForm.cleaned_data['name']
                 event.notify_date = eventForm.cleaned_data['notify_date']
                 event.period = eventForm.cleaned_data['period']
