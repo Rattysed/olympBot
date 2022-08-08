@@ -1,14 +1,17 @@
 import json
+import time
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
 from .models import Events, User
 from .bot_handler import make_distribution
 from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
-from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
+from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades, \
     add_to_local_data, local_data, notifications, write_message_with_menu
 import vk_api
 from .db_controller import *
+
+SUCCESS = HttpResponse('ok', content_type='text/plain', status=200)
 
 
 @csrf_exempt
@@ -22,6 +25,8 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
+                if time.time() - data['object']['message']['date'] >= 60:
+                    return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
@@ -31,22 +36,21 @@ def vk_bot(request):
                     local_data[sender]['question'] = 1
                     ask_about_grades(sender, auth)
 
-                elif local_data[sender]['question'] == 1\
+                elif local_data[sender]['question'] == 1 \
                         and not is_user_in_database(vk_id=sender):
                     if body.lower() in ['11', '10', '9', '8']:
                         create_new_vk_user(sender, int(body.lower()))
                         local_data[sender]['question'] = 2
                         send_menu(sender, auth)
-                elif local_data[sender]['question'] == 1\
+                elif local_data[sender]['question'] == 1 \
                         and is_user_in_database(vk_id=sender):
                     if body.lower() in ['11', '10', '9', '8']:
-
                         # TODO изменить класс юзера
 
                         local_data[sender]['question'] = 2
                         send_menu(sender, auth)
 
-                elif body.lower() == 'управление рассылкой'\
+                elif body.lower() == 'управление рассылкой' \
                         and local_data[sender]['question'] == 2:
                     local_data[sender]['question'] = 3
                     notifications(sender, auth)
@@ -57,10 +61,10 @@ def vk_bot(request):
                         and local_data[sender]['question'] == 2:
                     pass  # TODO отключение рассылки
 
-                elif body.lower() == 'мои рассылки'\
+                elif body.lower() == 'мои рассылки' \
                         and local_data[sender]['question'] == 3:
                     pass  # TODO показ ВСЕХ рассылок юзера
-                elif body.lower() == 'добавить уведомления'\
+                elif body.lower() == 'добавить уведомления' \
                         and local_data[sender]['question'] == 3:
                     all_subs = DATA.subjects[:]
                     output = 'Выберите один из предметов ниже:\n\n'
@@ -84,7 +88,7 @@ def vk_bot(request):
                 else:
                     pass
 
-    return HttpResponse('ok', content_type='text/plain', status=200)
+    return SUCCESS
 
 
 def test(request):
