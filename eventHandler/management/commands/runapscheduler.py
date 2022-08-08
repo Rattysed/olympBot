@@ -9,13 +9,15 @@ from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
 from eventHandler.db_controller import DATA
+from eventHandler.bot_handler import make_distribution
 
 logger = logging.getLogger(__name__)
 
 
 def my_job():
     print('Писька')
-    DATA.update_data()
+    # DATA.update_data()
+    make_distribution()
     pass
 
 
@@ -45,7 +47,7 @@ class Command(BaseCommand):
         scheduler.add_job(
             my_job,
             trigger=CronTrigger(second="*/10"),  # Every 10 seconds
-            id="Check_date",  # The `id` assigned to each job MUST be unique
+            id="my_job",  # The `id` assigned to each job MUST be unique
             max_instances=1,
             replace_existing=True,
         )
