@@ -41,38 +41,32 @@ keyboard_grades.add_button('8', color=VkKeyboardColor.SECONDARY)
 def write_message_with_menu(sender, message, auth):  # функция отправки сообщения + высвечивание кнопки перехода в меню
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id(), 'keyboard': keyboard_send_menu.get_keyboard()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def write_message(sender, message, auth):  # функция отправки сообщения message пользователю sender
     auth.method('messages.send', {'user_id': sender, 'message': message,
                                   'random_id': get_random_id()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def ask_about_grades(sender, auth):
     auth.method('messages.send', {'user_id': sender, 'message': 'В каком классе ты учишься?',
                                   'random_id': get_random_id(), 'keyboard': keyboard_grades.get_keyboard()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def send_menu(sender, auth):  # стандартное меню
     auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка для меню',
                                   'random_id': get_random_id(), 'keyboard': keyboard_menu.get_keyboard()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def choose_subjects(sender, auth):  # меню добавления предметов для рассылки
     auth.method('messages.send', {'user_id': sender, 'message': 'Отлично!\n Выберите предмет, по которому'
                                                                 ' хотите получать уведомления.',
                                   'random_id': get_random_id(), 'keyboard': keyboard_choose.get_keyboard()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def notifications(sender, auth):  # меню управления уведомлениями
     auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка',
                                   'random_id': get_random_id(), 'keyboard': keyboard_notif.get_keyboard()})
-    return HttpResponse('ok', content_type="text/plain", status=200)
 
 
 def add_to_local_data(id, question):

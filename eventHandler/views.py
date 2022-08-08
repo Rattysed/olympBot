@@ -29,8 +29,8 @@ def vk_bot(request):
 
                 if sender not in local_data:
                     add_to_local_data(sender, 0)
-                    ask_about_grades(sender, auth)
                     local_data[sender]['question'] = 1
+                    ask_about_grades(sender, auth)
 
                 elif local_data[sender]['question'] == 1\
                         and not is_user_in_database(vk_id=sender):
@@ -49,8 +49,8 @@ def vk_bot(request):
 
                 elif body.lower() == 'управление рассылкой'\
                         and local_data[sender]['question'] == 2:
-                    notifications(sender, auth)
                     local_data[sender]['question'] = 3
+                    notifications(sender, auth)
                 elif body.lower() == 'включить рассылку' \
                         and local_data[sender]['question'] == 2:
                     pass  # TODO включение рассылки
@@ -63,26 +63,24 @@ def vk_bot(request):
                     pass  # TODO показ ВСЕХ рассылок юзера
                 elif body.lower() == 'добавить уведомления'\
                         and local_data[sender]['question'] == 3:
-                    all_subs = list(get_subjects())
+                    all_subs = DATA.subjects[:]
                     output = 'Выберите один из предметов ниже:\n\n'
                     i = 1
                     for sub in all_subs:
                         output += str(i) + ') ' + str(sub) + '\n'
                         i += 1
                     output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
-                    write_message_with_menu(sender, output, auth)
                     local_data[sender]['question'] = 4
+                    write_message_with_menu(sender, output, auth)
 
                 elif local_data[sender]['question'] == 4:
-                    for num in range(len(list(get_subjects()))):
-                        if body.lower() == str(num + 1) or body.lower() == str(list(get_subjects())[num]):
-                            print(get_events_for_this_subject(num + 1))
+                    if not 1 <= int(body.lower()) <= len(DATA.subjects):
+                        write_message(sender, 'Неверный диапазон', auth)
+                    else:
+                        current_sub = DATA.subjects[int(body) - 1]
 
                 else:
                     pass
-
-            else:
-                HttpResponse('ok', content_type='text/plain', status=200)
 
     return HttpResponse('ok', content_type='text/plain', status=200)
 
