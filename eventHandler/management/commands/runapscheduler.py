@@ -8,13 +8,14 @@ from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
+from eventHandler.db_controller import DATA
 
 logger = logging.getLogger(__name__)
 
 
 def my_job():
     print('Писька')
-    # Your job processing logic here...
+    DATA.update_data()
     pass
 
 

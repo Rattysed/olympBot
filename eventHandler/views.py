@@ -9,7 +9,7 @@ from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
     add_to_local_data, local_data, notifications, write_message_with_menu
 import vk_api
 from .db_controller import is_user_in_database, create_new_vk_user, get_subjects,\
-    get_events_for_this_subject
+    get_events_for_this_subject, DATA
 
 
 @csrf_exempt

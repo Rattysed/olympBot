@@ -5,6 +5,23 @@ from django.db.models import QuerySet
 from .models import Events, User, Subjects
 
 
+class CollectedData:
+    subject_query: Union[QuerySet, List[Subjects]] = None
+    event_query: Union[QuerySet, List[Events]] = None
+    subjects: List = []
+    events: List = []
+
+    def update_data(self):
+        self.event_query = Events.objects.all()
+        self.subject_query = Subjects.objects.all()
+        self.subjects = list(self.subject_query)
+        self.events = list(self.event_query)
+
+
+DATA = CollectedData()
+DATA.update_data()
+
+
 def get_all_this_date(date) -> Union[QuerySet, List[Events]]:
     ev = Events.objects.filter(notify_date=date)
     return ev
@@ -15,7 +32,7 @@ def get_all_today() -> Union[QuerySet, List[Events]]:
 
 
 def get_subjects() -> Union[QuerySet, List[Events]]:
-    sub = Subjects.objects.filter()
+    sub = Subjects.objects.all()
     return sub
 
 
