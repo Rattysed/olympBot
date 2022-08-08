@@ -36,32 +36,40 @@ def get_subjects() -> Union[QuerySet, List[Events]]:
     return sub
 
 
-def get_events_for_this_subject(subject) -> Union[QuerySet, List[Events]]:
-    output = Events.objects.filter(subject=subject)
-    return output
+def get_events_by_subject(subject) -> Union[QuerySet, List[Events]]:
+    events = Events.objects.filter(subject=subject)
+    return events
 
 
 def is_user_in_database(tg_id='', vk_id=''):
-    if tg_id == vk_id == '':
-        raise ValueError
-    elif tg_id == '':
-        user = User.objects.filter(vk_id=vk_id)
-    elif vk_id == '':
-        user = User.objects.filter(tg_id=tg_id)
-    if len(list(user)) >= 1:
+    try:
+        get_user(vk_id=vk_id, tg_id=tg_id)
         return True
-    else:
+    except:
         return False
 
 
 def create_new_user(grade: int, vk_id='', tg_id=''):
     if vk_id == tg_id == '':
-        return AttributeError("Can't create user without any messenger account")
+        raise ValueError("Can't create user without any messenger account")
     user = User()
     user.vk_id = vk_id
     user.tg_id = tg_id
     user.grade = grade
     user.save()
+
+
+def get_user(vk_id='', tg_id=''):
+    if vk_id == tg_id == '':
+        raise ValueError("Can't find user without any messanger account")
+    user = User.get(vk_id=vk_id, tg_id=tg_id)
+    return user
+
+
+def add_events_by_subject(subject: Subjects, user: User):
+    events = get_events_by_subject(subject)
+    for ev in events:
+        user.events.add(ev)
 
 
 def create_new_vk_user(id, grade):

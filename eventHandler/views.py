@@ -8,8 +8,7 @@ from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
     add_to_local_data, local_data, notifications, write_message_with_menu
 import vk_api
-from .db_controller import is_user_in_database, create_new_vk_user, get_subjects,\
-    get_events_for_this_subject, DATA
+from .db_controller import *
 
 
 @csrf_exempt
@@ -77,7 +76,10 @@ def vk_bot(request):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         write_message(sender, 'Неверный диапазон', auth)
                     else:
-                        current_sub = DATA.subjects[int(body) - 1]
+                        user = get_user(str(sender))
+                        chosen_sub = DATA.subjects[int(body) - 1]
+                        add_events_by_subject(chosen_sub, user)
+                        write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
                     pass
