@@ -1,8 +1,5 @@
-import vk
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-from .vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
-from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 
 local_data = {}
 

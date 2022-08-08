@@ -1,7 +1,9 @@
 from .db_controller import get_all_today
 from eventHandler.vk_bot.vk_functions import *
-from eventHandler.vk_bot.vk_config import TOKEN
+import os
 import vk_api
+
+TOKEN = os.environ['TOKEN']
 
 
 def make_distribution():

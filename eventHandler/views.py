@@ -1,24 +1,26 @@
 import json
 import time
+import os
+import vk_api
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
-from .models import Events, User
 from .bot_handler import make_distribution
-from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades, \
     add_to_local_data, local_data, notifications, write_message_with_menu
-import vk_api
 from .db_controller import *
 
 SUCCESS = HttpResponse('ok', content_type='text/plain', status=200)
+SECRET_KEY_VK = os.environ['SECRET_KEY_VK']
+CONFIRMATION_TOKEN = os.environ['CONFIRMATION_TOKEN']
+TOKEN = os.environ['TOKEN']
 
 
 @csrf_exempt
 def vk_bot(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        if data['secret'] == SECRET_KEY:
+        if data['secret'] == SECRET_KEY_VK:
             print(data['type'])
             print(data)
             if data['type'] == 'confirmation':
