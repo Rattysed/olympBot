@@ -6,9 +6,10 @@ from .models import Events, User
 from .bot_handler import make_distribution
 from .vk_bot.vk_config import SECRET_KEY, TOKEN, CONFIRMATION_TOKEN
 from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades,\
-    add_to_local_data, local_data, notifications
+    add_to_local_data, local_data, notifications, write_message_with_menu
 import vk_api
-from .db_controller import is_user_in_database, create_new_vk_user
+from .db_controller import is_user_in_database, create_new_vk_user, get_subjects,\
+    get_events_for_this_subject
 
 
 @csrf_exempt
@@ -50,7 +51,33 @@ def vk_bot(request):
                         and local_data[sender]['question'] == 2:
                     notifications(sender, auth)
                     local_data[sender]['question'] = 3
-                # elif body.lower() == ''
+                elif body.lower() == 'включить рассылку' \
+                        and local_data[sender]['question'] == 2:
+                    pass  # TODO включение рассылки
+                elif body.lower() == 'отключить рассылку' \
+                        and local_data[sender]['question'] == 2:
+                    pass  # TODO отключение рассылки
+
+                elif body.lower() == 'мои рассылки'\
+                        and local_data[sender]['question'] == 3:
+                    pass  # TODO показ ВСЕХ рассылок юзера
+                elif body.lower() == 'добавить уведомления'\
+                        and local_data[sender]['question'] == 3:
+                    all_subs = list(get_subjects())
+                    output = 'Выберите один из предметов ниже:\n\n'
+                    i = 1
+                    for sub in all_subs:
+                        output += str(i) + ') ' + str(sub) + '\n'
+                        i += 1
+                    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+                    write_message_with_menu(sender, output, auth)
+                    local_data[sender]['question'] = 4
+
+                elif local_data[sender]['question'] == 4:
+                    for num in range(len(list(get_subjects()))):
+                        if body.lower() == str(num + 1) or body.lower() == str(list(get_subjects())[num]):
+                            print(get_events_for_this_subject(num + 1))
+
                 else:
                     pass
 

@@ -2,7 +2,7 @@ from eventHandler.models import Events, Subjects, User
 import datetime
 from typing import Union, List
 from django.db.models import QuerySet
-from .models import Events, User
+from .models import Events, User, Subjects
 
 
 def get_all_this_date(date) -> Union[QuerySet, List[Events]]:
@@ -12,6 +12,16 @@ def get_all_this_date(date) -> Union[QuerySet, List[Events]]:
 
 def get_all_today() -> Union[QuerySet, List[Events]]:
     return get_all_this_date(datetime.date.today())
+
+
+def get_subjects() -> Union[QuerySet, List[Events]]:
+    sub = Subjects.objects.filter()
+    return sub
+
+
+def get_events_for_this_subject(subject) -> Union[QuerySet, List[Events]]:
+    output = Events.objects.filter(subject=subject)
+    return output
 
 
 def is_user_in_database(tg_id='', vk_id=''):
@@ -47,4 +57,4 @@ def create_new_tg_user(id, grade):
 
 if __name__ == '__main__':
     pass
-    # print(get_all_this_date())
+    # print(get_subjects())
