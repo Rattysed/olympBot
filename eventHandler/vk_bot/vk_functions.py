@@ -76,3 +76,9 @@ def add_to_local_data(id, question):
     }
     local_data[id] = p
     return
+
+
+def send_info(senders, message, auth):
+    for sender in senders:
+        auth.method('messages.send', {'user_id': sender, 'message': message,
+                                      'random_id': get_random_id()})

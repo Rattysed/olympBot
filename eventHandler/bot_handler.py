@@ -1,8 +1,11 @@
 from .db_controller import get_all_today
 from eventHandler.vk_bot.vk_functions import *
+from eventHandler.vk_bot.vk_config import TOKEN
+import vk_api
 
 
 def make_distribution():
+    auth = vk_api.VkApi(token=TOKEN)
     events = get_all_today()
     print(len(events))
     for event in events:
@@ -18,4 +21,4 @@ def make_distribution():
 Уровень олимпиады: {event.level}
 Ссылка на сайт олимпиады: {event.event_url}
 Дополнительная информация: {event.description}"""
-#         huynya(vk_users, message)
+        send_info(vk_users, message, auth)
