@@ -62,7 +62,7 @@ def create_new_user(grade: int, vk_id='', tg_id=''):
 def get_user(vk_id='', tg_id=''):
     if vk_id == tg_id == '':
         raise ValueError("Can't find user without any messanger account")
-    user = User.get(vk_id=vk_id, tg_id=tg_id)
+    user = User.objects.get(vk_id=vk_id, tg_id=tg_id)
     return user
 
 
