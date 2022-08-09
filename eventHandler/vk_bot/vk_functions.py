@@ -8,15 +8,20 @@ local_data = {}
 
 
 class Command:
-    def __init__(self, title, action, keyboard: VkKeyboard = None, keyword=''):
+    def __init__(self, title, action, vk_keyboard: VkKeyboard = None, keyword=''):
         self.title = title
         self.action = action
         self.keyword = keyword
-        self.keyboard = keyboard
+        self.tg_keyboard = None
+        self.vk_keyboard = vk_keyboard
 
-    def reply(self, sender, auth):
+    def reply(self, sender, auth, vk=True):
         # TODO: Логгирование прям здесь
-        self.action(sender, auth, self)
+        message = self.action(self)
+        if vk:
+            vk_write_message(auth, sender, message)
+        else:
+            pass
 
 
 keyboard_menu = VkKeyboard(one_time=False)
@@ -56,23 +61,24 @@ def write_message_with_menu(sender, message, auth):  # функция отпра
                                   'random_id': get_random_id(), 'keyboard': keyboard_send_menu.get_keyboard()})
 
 
-def write_message(sender, message, auth,
-                  keyboard: VkKeyboard = None):  # функция отправки сообщения message пользователю sender
-    req_data = {'user_id': sender, 'message': message,
-                'random_id': get_random_id()}
+def vk_write_message(sender, auth, message,
+                     keyboard: VkKeyboard = None):  # функция отправки сообщения message пользователю sender
+    message_data = {'user_id': sender, 'message': message,
+                    'random_id': get_random_id()}
     if keyboard is not None:
-        req_data['keyboard'] = keyboard.get_keyboard()
-    auth.method('messages.send', req_data)
+        message_data['keyboard'] = keyboard.get_keyboard()
+    auth.method('messages.send', message_data)
 
 
-def ask_about_grades(sender, auth, command: Command):
-    write_message(sender, 'В каком классе ты учишься?', auth, keyboard=command.keyboard)
+def ask_about_grades():
+    return 'В каком вы сейчас классе?'
 
 
-def send_menu(sender, auth):  # стандартное меню
-    auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка для меню',
-                                  'random_id': get_random_id(), 'keyboard': keyboard_menu.get_keyboard()})
+def send_menu():  # стандартное меню
+    return 'Типа меню'
 
+def error_message():
+    return 'Неизвестная команда'
 
 def choose_subjects(sender, auth):  # меню добавления предметов для рассылки
     auth.method('messages.send', {'user_id': sender, 'message': 'Отлично!\n Выберите предмет, по которому'
@@ -120,5 +126,7 @@ def make_distribution():
 
 COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
-    'start': Command('ask_about_grades', action=ask_about_grades, keyboard=keyboard_grades),
+    'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
+    'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
+    'error': Command('error', action=error_message, vk_keyboard=keyboard_send_menu),
 }

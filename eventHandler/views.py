@@ -34,18 +34,18 @@ def vk_bot(request):
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
                     change_user_question(sender, DATA.questions[0])
-                    COMMANDS_DICT['start'].reply(sender, auth)
+                    COMMANDS_DICT['старт'].reply()
 
                 elif body.lower() == 'меню':
+                    COMMANDS_DICT['меню'].reply()
                     change_user_question(sender, DATA.questions[1])
-                    send_menu(sender, auth)
 
                 elif get_user_question(sender) == str(DATA.questions[0]):
                     if body.lower() in ['11', '10', '9', '8']:
                         print('HUI')
                         change_user_grade(sender, int(body))
                         change_user_question(sender, DATA.questions[1])
-                        send_menu(sender, auth)
+                        COMMANDS_DICT['меню'].reply()
 
                 elif body.lower() == 'управление рассылкой' \
                         and get_user_question(sender) == str(DATA.questions[1]):
@@ -75,15 +75,16 @@ def vk_bot(request):
 
                 elif get_user_question(sender) == str(DATA.questions[3]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
-                        write_message(sender, 'Неверный диапазон', auth)
+                        pass
+                        # write_message(sender, 'Неверный диапазон', auth)
                     else:
                         user = get_user(str(sender))
                         chosen_sub = DATA.subjects[int(body) - 1]
                         add_events_by_subject(chosen_sub, user)
-                        write_message(sender, 'Параметры рассылки обновлены!', auth)
+                        # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
-                    pass
+                    COMMANDS_DICT['error'].reply()
 
     return SUCCESS
 
