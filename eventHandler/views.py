@@ -34,10 +34,10 @@ def vk_bot(request):
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
                     change_user_question(sender, DATA.questions[0])
-                    COMMANDS_DICT['старт'].reply()
+                    COMMANDS_DICT['старт'].reply(sender, auth)
 
                 elif body.lower() == 'меню':
-                    COMMANDS_DICT['меню'].reply()
+                    COMMANDS_DICT['меню'].reply(sender, auth)
                     change_user_question(sender, DATA.questions[1])
 
                 elif get_user_question(sender) == str(DATA.questions[0]):
@@ -45,7 +45,7 @@ def vk_bot(request):
                         print('HUI')
                         change_user_grade(sender, int(body))
                         change_user_question(sender, DATA.questions[1])
-                        COMMANDS_DICT['меню'].reply()
+                        COMMANDS_DICT['меню'].reply(sender, auth)
 
                 elif body.lower() == 'управление рассылкой' \
                         and get_user_question(sender) == str(DATA.questions[1]):
@@ -84,7 +84,7 @@ def vk_bot(request):
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
-                    COMMANDS_DICT['error'].reply()
+                    COMMANDS_DICT['error'].reply(sender, auth)
 
     return SUCCESS
 

@@ -17,9 +17,9 @@ class Command:
 
     def reply(self, sender, auth, vk=True):
         # TODO: Логгирование прям здесь
-        message = self.action(self)
+        message = self.action()
         if vk:
-            vk_write_message(auth, sender, message)
+            vk_write_message(sender, auth, message, keyboard=self.vk_keyboard)
         else:
             pass
 
@@ -128,5 +128,5 @@ COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
     'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
     'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
-    'error': Command('error', action=error_message, vk_keyboard=keyboard_send_menu),
+    'error': Command('error', action=error_message, vk_keyboard=keyboard_menu),
 }
