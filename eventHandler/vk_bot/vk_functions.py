@@ -15,9 +15,13 @@ class Command:
         self.tg_keyboard = None
         self.vk_keyboard = vk_keyboard
 
-    def reply(self, sender, auth, vk=True):
+    def reply(self, sender, auth, vk=True, **kwargs):
         # TODO: Логгирование прям здесь
-        message = self.action()
+
+        if kwargs.get('huynya_ebanaya', False):
+            pass
+        else:
+            message = self.action()
         if vk:
             vk_write_message(sender, auth, message, keyboard=self.vk_keyboard)
         else:
@@ -77,8 +81,21 @@ def ask_about_grades():
 def send_menu():  # стандартное меню
     return 'Типа меню'
 
+
 def error_message():
     return 'Неизвестная команда'
+
+
+def subject_notification():
+    all_subs = DATA.subjects[:]
+    output = 'Выберите один из предметов ниже:\n\n'
+    i = 1
+    for sub in all_subs:
+        output += str(i) + ') ' + str(sub) + '\n'
+        i += 1
+    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+    return output
+
 
 def choose_subjects(sender, auth):  # меню добавления предметов для рассылки
     auth.method('messages.send', {'user_id': sender, 'message': 'Отлично!\n Выберите предмет, по которому'
@@ -128,5 +145,9 @@ COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
     'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
     'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
-    'error': Command('error', action=error_message, vk_keyboard=keyboard_menu),
+    'wrong': Command('error', action=error_message, vk_keyboard=keyboard_menu),
+    'добавить уведомления по предметам': Command('add_notification_sub', action=subject_notification,
+                                                 vk_keyboard=keyboard_send_menu),
+    'success': Command('success', action=lambda: "Успех!", vk_keyboard=keyboard_send_menu),
+    'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
 }

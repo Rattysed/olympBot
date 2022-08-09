@@ -63,28 +63,23 @@ def vk_bot(request):
                 #     pass  # TODO показ ВСЕХ рассылок юзера
                 elif body.lower() == 'добавить уведомления' \
                         and get_user_question(sender) == str(DATA.questions[2]):
-                    all_subs = DATA.subjects[:]
-                    output = 'Выберите один из предметов ниже:\n\n'
-                    i = 1
-                    for sub in all_subs:
-                        output += str(i) + ') ' + str(sub) + '\n'
-                        i += 1
-                    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+                    COMMANDS_DICT['добавить уведомления по предметам'].reply(sender, auth)
                     change_user_question(sender, DATA.questions[3])
-                    write_message_with_menu(sender, output, auth)
+
 
                 elif get_user_question(sender) == str(DATA.questions[3]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
-                        pass
-                        # write_message(sender, 'Неверный диапазон', auth)
+                        COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
+                        #TODO: Создать функцию-обработчик изменений подписанных ивентов
                         user = get_user(str(sender))
                         chosen_sub = DATA.subjects[int(body) - 1]
                         add_events_by_subject(chosen_sub, user)
+                        COMMANDS_DICT['success'].reply(sender, auth)
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
-                    COMMANDS_DICT['error'].reply(sender, auth)
+                    COMMANDS_DICT['wrong'].reply(sender, auth)
 
     return SUCCESS
 
