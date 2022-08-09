@@ -63,7 +63,7 @@ def create_new_user(grade: int, vk_id='', tg_id=''):
     user.vk_id = vk_id
     user.tg_id = tg_id
     user.grade = grade
-    user.is_rassylka = 0
+    user.is_rassylka = 1
     user.current_question = DATA.questions[0]
     user.save()
 

@@ -51,6 +51,7 @@ def vk_bot(request):
 
                 elif body.lower() == 'управление рассылкой' \
                         and get_user_question(sender) == str(DATA.questions[1]):
+                    change_user_question(sender, DATA.questions[2])
                     notifications(sender, auth)
                 # elif body.lower() == 'включить рассылку' \
                 #         and local_data[sender]['question'] == 2:
@@ -62,26 +63,26 @@ def vk_bot(request):
                 # elif body.lower() == 'мои рассылки' \
                 #         and local_data[sender]['question'] == 3:
                 #     pass  # TODO показ ВСЕХ рассылок юзера
-                # elif body.lower() == 'добавить уведомления' \
-                #         and local_data[sender]['question'] == 3:
-                #     all_subs = DATA.subjects[:]
-                #     output = 'Выберите один из предметов ниже:\n\n'
-                #     i = 1
-                #     for sub in all_subs:
-                #         output += str(i) + ') ' + str(sub) + '\n'
-                #         i += 1
-                #     output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
-                #     local_data[sender]['question'] = 4
-                #     write_message_with_menu(sender, output, auth)
-                #
-                # elif local_data[sender]['question'] == 4:
-                #     if not 1 <= int(body.lower()) <= len(DATA.subjects):
-                #         write_message(sender, 'Неверный диапазон', auth)
-                #     else:
-                #         user = get_user(str(sender))
-                #         chosen_sub = DATA.subjects[int(body) - 1]
-                #         add_events_by_subject(chosen_sub, user)
-                #         write_message(sender, 'Параметры рассылки обновлены!', auth)
+                elif body.lower() == 'добавить уведомления' \
+                        and get_user_question(sender) == str(DATA.questions[2]):
+                    all_subs = DATA.subjects[:]
+                    output = 'Выберите один из предметов ниже:\n\n'
+                    i = 1
+                    for sub in all_subs:
+                        output += str(i) + ') ' + str(sub) + '\n'
+                        i += 1
+                    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+                    change_user_question(sender, DATA.questions[3])
+                    write_message_with_menu(sender, output, auth)
+
+                elif get_user_question(sender) == str(DATA.questions[3]):
+                    if not 1 <= int(body.lower()) <= len(DATA.subjects):
+                        write_message(sender, 'Неверный диапазон', auth)
+                    else:
+                        user = get_user(str(sender))
+                        chosen_sub = DATA.subjects[int(body) - 1]
+                        add_events_by_subject(chosen_sub, user)
+                        write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
                     pass
