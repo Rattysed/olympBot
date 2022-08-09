@@ -1,7 +1,23 @@
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from eventHandler.db_controller import *
+from vk_api import VkApi
+import os
 
 local_data = {}
+
+
+class Command:
+    def __init__(self, title, action, keyboard: VkKeyboard = None, keyword=''):
+        self.title = title
+        self.action = action
+        self.keyword = keyword
+        self.keyboard = keyboard
+
+    def reply(self, sender, auth):
+        # TODO: Логгирование прям здесь
+        self.action(sender, auth, self)
+
 
 keyboard_menu = VkKeyboard(one_time=False)
 keyboard_menu.add_button('Управление рассылкой', color=VkKeyboardColor.PRIMARY)
@@ -40,14 +56,17 @@ def write_message_with_menu(sender, message, auth):  # функция отпра
                                   'random_id': get_random_id(), 'keyboard': keyboard_send_menu.get_keyboard()})
 
 
-def write_message(sender, message, auth):  # функция отправки сообщения message пользователю sender
-    auth.method('messages.send', {'user_id': sender, 'message': message,
-                                  'random_id': get_random_id()})
+def write_message(sender, message, auth,
+                  keyboard: VkKeyboard = None):  # функция отправки сообщения message пользователю sender
+    req_data = {'user_id': sender, 'message': message,
+                'random_id': get_random_id()}
+    if keyboard is not None:
+        req_data['keyboard'] = keyboard.get_keyboard()
+    auth.method('messages.send', req_data)
 
 
-def ask_about_grades(sender, auth):
-    auth.method('messages.send', {'user_id': sender, 'message': 'В каком классе ты учишься?',
-                                  'random_id': get_random_id(), 'keyboard': keyboard_grades.get_keyboard()})
+def ask_about_grades(sender, auth, command: Command):
+    write_message(sender, 'В каком классе ты учишься?', auth, keyboard=command.keyboard.get_keyboard())
 
 
 def send_menu(sender, auth):  # стандартное меню
@@ -66,16 +85,39 @@ def notifications(sender, auth):  # меню управления уведомл
                                   'random_id': get_random_id(), 'keyboard': keyboard_notif.get_keyboard()})
 
 
-def add_to_local_data(id, question):
-    p = {
-        'id': id,
-        'question': question
-    }
-    local_data[id] = p
-    return
-
-
 def send_info(senders, message, auth):
     for sender in senders:
         auth.method('messages.send', {'user_id': sender, 'message': message,
                                       'random_id': get_random_id()})
+
+
+TOKEN = os.environ['TOKEN']
+
+
+def test_action(vk_id='', tg_id=''):
+    return 'Тестовая команда'
+
+
+def make_distribution():
+    auth = VkApi(token=TOKEN)
+    events = get_all_today()
+    print(len(events))
+    for event in events:
+        users = event.user_set.all()
+        tg_users = set()
+        vk_users = set()
+        for user in users:
+            tg_users.add(user.tg_id)
+            vk_users.add(user.vk_id)
+        message = f"""Олимпиада {event.name} для {str(event.event_grade)} класса
+по предметам {' '.join([x['name'] for x in event.subject.all().values('name')])} (профили:{' '.join([x['name'] for x in event.profile.all().values('name')])})
+Сроки проведения: {event.period}
+Уровень олимпиады: {event.level}
+Ссылка на сайт олимпиады: {event.event_url}
+Дополнительная информация: {event.description}"""
+        send_info(vk_users, message, auth)
+
+
+COMMANDS_DICT = {
+    'тест': Command('тест', action=test_action, keyword='тест')
+}

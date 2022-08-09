@@ -5,9 +5,7 @@ import vk_api
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
-from .bot_handler import make_distribution
-from .vk_bot.vk_functions import write_message, send_menu, ask_about_grades, \
-    add_to_local_data, local_data, notifications, write_message_with_menu
+from .vk_bot.vk_functions import *
 from .db_controller import *
 
 SUCCESS = HttpResponse('ok', content_type='text/plain', status=200)

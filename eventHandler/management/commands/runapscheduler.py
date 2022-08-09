@@ -9,7 +9,7 @@ from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
 from eventHandler.db_controller import DATA
-from eventHandler.bot_handler import make_distribution
+from eventHandler.vk_bot.vk_functions import make_distribution
 
 logger = logging.getLogger(__name__)
 
