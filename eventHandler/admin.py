@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Event, User, Profile
+from .models import Subject, Event, User, Profile, Question
 
 
 # Логин: admin
@@ -7,7 +7,7 @@ from .models import Subject, Event, User, Profile
 # email: admin@example.com
 
 
-class SubjectAndProfileAdmin(admin.ModelAdmin):
+class SubjectAndProfileAndQuestionAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
 
@@ -22,7 +22,8 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('vk_id', 'tg_id')
 
 
-admin.site.register(Subject, SubjectAndProfileAdmin)
-admin.site.register(Profile, SubjectAndProfileAdmin)
+admin.site.register(Subject, SubjectAndProfileAndQuestionAdmin)
+admin.site.register(Profile, SubjectAndProfileAndQuestionAdmin)
+admin.site.register(Question, SubjectAndProfileAndQuestionAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(User, UserAdmin)

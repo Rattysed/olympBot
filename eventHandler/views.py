@@ -33,59 +33,55 @@ def vk_bot(request):
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
 
-                if sender not in local_data:
-                    add_to_local_data(sender, 0)
-                    local_data[sender]['question'] = 1
+                if not is_user_in_database(vk_id=sender):
+                    create_new_vk_user(sender, None)
+                    change_user_question(sender, DATA.questions[0])
                     ask_about_grades(sender, auth)
 
-                elif local_data[sender]['question'] == 1 \
-                        and not is_user_in_database(vk_id=sender):
-                    if body.lower() in ['11', '10', '9', '8']:
-                        create_new_vk_user(sender, int(body.lower()))
-                        local_data[sender]['question'] = 2
-                        send_menu(sender, auth)
-                elif local_data[sender]['question'] == 1 \
-                        and is_user_in_database(vk_id=sender):
-                    if body.lower() in ['11', '10', '9', '8']:
-                        # TODO изменить класс юзера
+                elif body.lower() == 'меню':
+                    change_user_question(sender, DATA.questions[1])
+                    send_menu(sender, auth)
 
-                        local_data[sender]['question'] = 2
+                elif get_user_question(sender) == str(DATA.questions[0]):
+                    if body.lower() in ['11', '10', '9', '8']:
+                        print('HUI')
+                        change_user_grade(sender, int(body))
+                        change_user_question(sender, DATA.questions[1])
                         send_menu(sender, auth)
 
                 elif body.lower() == 'управление рассылкой' \
-                        and local_data[sender]['question'] == 2:
-                    local_data[sender]['question'] = 3
+                        and get_user_question(sender) == str(DATA.questions[1]):
                     notifications(sender, auth)
-                elif body.lower() == 'включить рассылку' \
-                        and local_data[sender]['question'] == 2:
-                    pass  # TODO включение рассылки
-                elif body.lower() == 'отключить рассылку' \
-                        and local_data[sender]['question'] == 2:
-                    pass  # TODO отключение рассылки
-
-                elif body.lower() == 'мои рассылки' \
-                        and local_data[sender]['question'] == 3:
-                    pass  # TODO показ ВСЕХ рассылок юзера
-                elif body.lower() == 'добавить уведомления' \
-                        and local_data[sender]['question'] == 3:
-                    all_subs = DATA.subjects[:]
-                    output = 'Выберите один из предметов ниже:\n\n'
-                    i = 1
-                    for sub in all_subs:
-                        output += str(i) + ') ' + str(sub) + '\n'
-                        i += 1
-                    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
-                    local_data[sender]['question'] = 4
-                    write_message_with_menu(sender, output, auth)
-
-                elif local_data[sender]['question'] == 4:
-                    if not 1 <= int(body.lower()) <= len(DATA.subjects):
-                        write_message(sender, 'Неверный диапазон', auth)
-                    else:
-                        user = get_user(str(sender))
-                        chosen_sub = DATA.subjects[int(body) - 1]
-                        add_events_by_subject(chosen_sub, user)
-                        write_message(sender, 'Параметры рассылки обновлены!', auth)
+                # elif body.lower() == 'включить рассылку' \
+                #         and local_data[sender]['question'] == 2:
+                #     pass  # TODO включение рассылки
+                # elif body.lower() == 'отключить рассылку' \
+                #         and local_data[sender]['question'] == 2:
+                #     pass  # TODO отключение рассылки
+                #
+                # elif body.lower() == 'мои рассылки' \
+                #         and local_data[sender]['question'] == 3:
+                #     pass  # TODO показ ВСЕХ рассылок юзера
+                # elif body.lower() == 'добавить уведомления' \
+                #         and local_data[sender]['question'] == 3:
+                #     all_subs = DATA.subjects[:]
+                #     output = 'Выберите один из предметов ниже:\n\n'
+                #     i = 1
+                #     for sub in all_subs:
+                #         output += str(i) + ') ' + str(sub) + '\n'
+                #         i += 1
+                #     output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+                #     local_data[sender]['question'] = 4
+                #     write_message_with_menu(sender, output, auth)
+                #
+                # elif local_data[sender]['question'] == 4:
+                #     if not 1 <= int(body.lower()) <= len(DATA.subjects):
+                #         write_message(sender, 'Неверный диапазон', auth)
+                #     else:
+                #         user = get_user(str(sender))
+                #         chosen_sub = DATA.subjects[int(body) - 1]
+                #         add_events_by_subject(chosen_sub, user)
+                #         write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
                     pass

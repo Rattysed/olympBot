@@ -49,14 +49,27 @@ class Event(models.Model):  # События
         ordering = ['level']
 
 
+class Question(models.Model):
+    name = models.CharField('Название', max_length=150)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Вопрос'
+        verbose_name_plural = 'Вопросы'
+        ordering = ['name']
+
+
 class User(models.Model):
     vk_id = models.CharField('ВКонтакте', max_length=20, blank=True)
     tg_id = models.CharField('Телеграм', max_length=50, blank=True)
     is_rassylka = models.BooleanField('Рассылка', default=True)
-    grade = models.IntegerField('Класс пользователя', default=11)
+    grade = models.IntegerField('Класс пользователя', null=True)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
     events = models.ManyToManyField(Event)
+    current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f"{self.vk_id} - {self.tg_id}"

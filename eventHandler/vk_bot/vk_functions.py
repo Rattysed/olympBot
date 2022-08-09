@@ -3,14 +3,14 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 local_data = {}
 
-keyboard_menu = VkKeyboard(one_time=True)
+keyboard_menu = VkKeyboard(one_time=False)
 keyboard_menu.add_button('Управление рассылкой', color=VkKeyboardColor.PRIMARY)
 keyboard_menu.add_line()
 keyboard_menu.add_button('Включить рассылку', color=VkKeyboardColor.POSITIVE)
 keyboard_menu.add_line()
 keyboard_menu.add_button('Отключить рассылку', color=VkKeyboardColor.NEGATIVE)
 
-keyboard_send_menu = VkKeyboard(one_time=True)
+keyboard_send_menu = VkKeyboard(one_time=False)
 keyboard_send_menu.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
 keyboard_choose = VkKeyboard(one_time=False)
@@ -19,7 +19,7 @@ keyboard_choose.add_button('Информатика', color=VkKeyboardColor.SECON
 keyboard_choose.add_line()
 keyboard_choose.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
-keyboard_notif = VkKeyboard(one_time=True)
+keyboard_notif = VkKeyboard(one_time=False)
 keyboard_notif.add_button('Мои рассылки', color=VkKeyboardColor.PRIMARY)
 keyboard_notif.add_line()
 keyboard_notif.add_button('Добавить уведомления', color=VkKeyboardColor.SECONDARY)
