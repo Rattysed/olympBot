@@ -66,7 +66,7 @@ def write_message(sender, message, auth,
 
 
 def ask_about_grades(sender, auth, command: Command):
-    write_message(sender, 'В каком классе ты учишься?', auth, keyboard=command.keyboard.get_keyboard())
+    write_message(sender, 'В каком классе ты учишься?', auth, keyboard=command.keyboard)
 
 
 def send_menu(sender, auth):  # стандартное меню
