@@ -119,5 +119,6 @@ def make_distribution():
 
 
 COMMANDS_DICT = {
-    'тест': Command('тест', action=test_action, keyword='тест')
+    'тест': Command('тест', action=test_action, keyword='тест'),
+    'start': Command('ask_about_grades', action=ask_about_grades, keyboard=keyboard_grades),
 }

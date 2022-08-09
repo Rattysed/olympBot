@@ -34,7 +34,7 @@ def vk_bot(request):
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
                     change_user_question(sender, DATA.questions[0])
-                    ask_about_grades(sender, auth)
+                    COMMANDS_DICT['start'].reply(sender, auth)
 
                 elif body.lower() == 'меню':
                     change_user_question(sender, DATA.questions[1])
