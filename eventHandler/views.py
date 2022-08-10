@@ -42,7 +42,6 @@ def vk_bot(request):
 
                 elif get_user_question(sender) == str(DATA.questions[0]):
                     if body.lower() in ['11', '10', '9', '8']:
-                        print('HUI')
                         change_user_grade(sender, int(body))
                         change_user_question(sender, DATA.questions[1])
                         COMMANDS_DICT['меню'].reply(sender, auth)
@@ -51,30 +50,34 @@ def vk_bot(request):
                         and get_user_question(sender) == str(DATA.questions[1]):
                     change_user_question(sender, DATA.questions[2])
                     notifications(sender, auth)
-                # elif body.lower() == 'включить рассылку' \
-                #         and local_data[sender]['question'] == 2:
-                #     pass  # TODO включение рассылки
-                # elif body.lower() == 'отключить рассылку' \
-                #         and local_data[sender]['question'] == 2:
-                #     pass  # TODO отключение рассылки
-                #
-                # elif body.lower() == 'мои рассылки' \
-                #         and local_data[sender]['question'] == 3:
-                #     pass  # TODO показ ВСЕХ рассылок юзера
+                elif body.lower() == 'включить рассылку' \
+                        and get_user_question(sender) == str(DATA.questions[1]):
+                    turn_on_sending(sender)
+                    COMMANDS_DICT['success'].reply(sender, auth)
+                elif body.lower() == 'отключить рассылку' \
+                        and get_user_question(sender) == str(DATA.questions[1]):
+                    turn_off_sending(sender)
+                    COMMANDS_DICT['success'].reply(sender, auth)
+
+                elif body.lower() == 'мои рассылки' \
+                        and get_user_question(sender) == str(DATA.questions[2]):
+                    COMMANDS_DICT['мои рассылки'].reply(sender, auth, vk_id=True)
+
+                    pass  # TODO показ ВСЕХ рассылок юзера
                 elif body.lower() == 'добавить уведомления' \
                         and get_user_question(sender) == str(DATA.questions[2]):
                     COMMANDS_DICT['добавить уведомления по предметам'].reply(sender, auth)
                     change_user_question(sender, DATA.questions[3])
 
-
                 elif get_user_question(sender) == str(DATA.questions[3]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
-                        #TODO: Создать функцию-обработчик изменений подписанных ивентов
+                        # TODO: Создать функцию-обработчик изменений подписанных ивентов
                         user = get_user(str(sender))
                         chosen_sub = DATA.subjects[int(body) - 1]
                         add_events_by_subject(chosen_sub, user)
+                        change_user_question(sender, DATA.questions[1])
                         COMMANDS_DICT['success'].reply(sender, auth)
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 

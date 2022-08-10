@@ -48,26 +48,6 @@ def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
     return events
 
 
-def is_user_in_database(tg_id='', vk_id=''):
-    try:
-        get_user(vk_id=vk_id, tg_id=tg_id)
-        return True
-    except:
-        return False
-
-
-def create_new_user(grade: int, vk_id='', tg_id=''):
-    if vk_id == tg_id == '':
-        raise ValueError("Can't create user without any messenger account")
-    user = User()
-    user.vk_id = vk_id
-    user.tg_id = tg_id
-    user.grade = grade
-    user.is_rassylka = 1
-    user.current_question = DATA.questions[0]
-    user.save()
-
-
 def get_user(vk_id='', tg_id=''):
     if vk_id == tg_id == '':
         raise ValueError("Can't find user without any messanger account")
@@ -80,6 +60,23 @@ def get_user_question(vk_id):
     return str(user.current_question)
 
 
+def get_events_of_user(vk_id):
+    events_of_user_sorted = set()
+    user = get_user(vk_id=vk_id)
+    subjects = list(get_subjects())
+    for sub in subjects:
+        events_of_user_sorted.add((sub, user.events.filter(subject=sub)))
+    return events_of_user_sorted
+
+
+def is_user_in_database(tg_id='', vk_id=''):
+    try:
+        get_user(vk_id=vk_id, tg_id=tg_id)
+        return True
+    except:
+        return False
+
+
 def change_user_grade(vk_id, grade):
     user = get_user(vk_id=vk_id)
     user.grade = grade
@@ -89,6 +86,18 @@ def change_user_grade(vk_id, grade):
 def change_user_question(vk_id, question):
     user = get_user(vk_id=vk_id)
     user.current_question = question
+    user.save()
+
+
+def turn_on_sending(vk_id):
+    user = get_user(vk_id=vk_id)
+    user.is_rassylka = 1
+    user.save()
+
+
+def turn_off_sending(vk_id):
+    user = get_user(vk_id=vk_id)
+    user.is_rassylka = 0
     user.save()
 
 
@@ -104,6 +113,18 @@ def create_new_vk_user(id, grade):
 
 def create_new_tg_user(id, grade):
     create_new_user(grade, tg_id=id)
+
+
+def create_new_user(grade: int, vk_id='', tg_id=''):
+    if vk_id == tg_id == '':
+        raise ValueError("Can't create user without any messenger account")
+    user = User()
+    user.vk_id = vk_id
+    user.tg_id = tg_id
+    user.grade = grade
+    user.is_rassylka = 1
+    user.current_question = DATA.questions[0]
+    user.save()
 
 
 if __name__ == '__main__':
