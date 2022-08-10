@@ -61,11 +61,16 @@ def get_user_question(vk_id):
 
 
 def get_events_of_user(vk_id):
-    events_of_user_sorted = set()
+    events_of_user_sorted = dict()
     user = get_user(vk_id=vk_id)
     subjects = list(get_subjects())
+    events = user.events.all()
     for sub in subjects:
-        events_of_user_sorted.add((sub, user.events.filter(subject=sub)))
+        sub_events = events.filter(subject=sub)
+        for ev in sub_events:
+            if not events_of_user_sorted.get(sub, False):
+                events_of_user_sorted[sub] = []
+            events_of_user_sorted[sub].append(ev)
     return events_of_user_sorted
 
 
@@ -101,10 +106,13 @@ def turn_off_sending(vk_id):
     user.save()
 
 
-def add_events_by_subject(subject: Subject, user: User):
+def change_events_by_subject(subject: Subject, user: User, status):
     events = get_events_by_subject(subject)
-    for ev in events:
-        user.events.add(ev)
+    if status == 'добавление олимпиад по соответствующему предмету':
+        for ev in events:
+            user.events.add(ev)
+    elif status == 'удаление олимпиад по соответствующему предмету':
+        pass
 
 
 def create_new_vk_user(id, grade):

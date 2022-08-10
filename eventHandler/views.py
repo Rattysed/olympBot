@@ -62,21 +62,21 @@ def vk_bot(request):
                 elif body.lower() == 'мои рассылки' \
                         and get_user_question(sender) == str(DATA.questions[2]):
                     COMMANDS_DICT['мои рассылки'].reply(sender, auth, vk_id=True)
-
-                    pass  # TODO показ ВСЕХ рассылок юзера
-                elif body.lower() == 'добавить уведомления' \
+                elif (body.lower() == 'добавить уведомления' or body.lower() == 'убрать уведомления')\
                         and get_user_question(sender) == str(DATA.questions[2]):
-                    COMMANDS_DICT['добавить уведомления по предметам'].reply(sender, auth)
-                    change_user_question(sender, DATA.questions[3])
+                    COMMANDS_DICT['изменить уведомления по предметам'].reply(sender, auth)
+                    change_user_question(sender, DATA.questions[3 + (body.lower() == 'убрать уведомления')])
+                    print(get_user_question(sender))
 
-                elif get_user_question(sender) == str(DATA.questions[3]):
+                elif get_user_question(sender) == str(DATA.questions[3])\
+                        or get_user_question(sender) == str(DATA.questions[4]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
                         # TODO: Создать функцию-обработчик изменений подписанных ивентов
                         user = get_user(str(sender))
                         chosen_sub = DATA.subjects[int(body) - 1]
-                        add_events_by_subject(chosen_sub, user)
+                        change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
                         change_user_question(sender, DATA.questions[1])
                         COMMANDS_DICT['success'].reply(sender, auth)
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)

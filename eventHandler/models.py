@@ -58,7 +58,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
-        ordering = ['name']
+        ordering = ['id']
 
 
 class User(models.Model):

@@ -102,14 +102,8 @@ def subject_notification():
 def show_distributions(sender):
     events_of_user = get_events_of_user(sender)  # set of tuples
     output = 'Ваши рассылки:\n\n'
-    for el in events_of_user:
-        sub = el[0]
-        evs = el[1]
-        output += str(sub) + ':\n'
-        i = 1
-        for ev in evs:
-            output += str(i) + ') ' + str(ev) + '\n'
-            i += 1
+    for sub in DATA.subjects:
+        evs = events_of_user[sub]
     return output
 
 
@@ -162,7 +156,7 @@ COMMANDS_DICT = {
     'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
     'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
     'wrong': Command('error', action=error_message, vk_keyboard=keyboard_menu),
-    'добавить уведомления по предметам': Command('add_notification_sub', action=subject_notification,
+    'изменить уведомления по предметам': Command('change_notification_sub', action=subject_notification,
                                                  vk_keyboard=keyboard_send_menu),
     'success': Command('success', action=lambda: "Успех!", vk_keyboard=keyboard_menu),
     'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
