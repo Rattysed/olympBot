@@ -68,7 +68,7 @@ def get_events_of_user(vk_id):
     for sub in subjects:
         sub_events = events.filter(subject=sub)
         for ev in sub_events:
-            if not events_of_user_sorted.get(sub, False):
+            if not events_of_user_sorted.get(sub.name, False):
                 events_of_user_sorted[sub] = []
             events_of_user_sorted[sub].append(ev)
     return events_of_user_sorted
