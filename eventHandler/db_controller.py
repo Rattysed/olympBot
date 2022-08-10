@@ -82,6 +82,11 @@ def is_user_in_database(tg_id='', vk_id=''):
         return False
 
 
+def is_distribution(sender):
+    user = get_user(sender)
+    return user.is_rassylka
+
+
 def change_user_grade(vk_id, grade):
     user = get_user(vk_id=vk_id)
     user.grade = grade
