@@ -101,12 +101,18 @@ def subject_notification():
 
 def show_distributions(sender):
     events_of_user = get_events_of_user(sender)  # set of tuples
+    print(events_of_user)
     output = 'Ваши рассылки:\n\n'
-    for sub in DATA.subjects:
-        evs = events_of_user[sub.name]
+    if len(events_of_user.keys()) == 0:
+        output = 'Рассылок нет.'
+    for sub in DATA.subjects[:]:
+        evs = events_of_user.get(sub.name, [])
+        print(evs)
+        if len(evs) == 0:
+            continue
         output += f'{sub.name}:\n'
         for num, ev in enumerate(evs):
-            output += f'\t{num + 1} {ev.name}'
+            output += f'\t{num + 1}) {ev.name}\n'
     return output
 
 
