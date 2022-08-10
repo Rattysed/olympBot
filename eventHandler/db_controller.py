@@ -6,23 +6,15 @@ from .models import Event, User, Subject, Question
 
 class CollectedData:
     subject_query: Union[QuerySet, List[Subject]] = None
-    event_query: Union[QuerySet, List[Event]] = None
     question_query: Union[QuerySet, List[Question]] = None
-    user_query: Union[QuerySet, List[User]] = None
     subjects: List = []
-    events: List = []
     questions: List = []
-    users: List = []
 
     def update_data(self):
-        self.event_query = Event.objects.all()
         self.subject_query = Subject.objects.all()
         self.question_query = Question.objects.all()
-        self.user_query = User.objects.all()
         self.subjects = list(self.subject_query)
-        self.events = list(self.event_query)
         self.questions = list(self.question_query)
-        self.users = list(self.user_query)
 
 
 DATA = CollectedData()
@@ -113,7 +105,7 @@ def turn_off_sending(vk_id):
 
 def change_events_by_subject(subject: Subject, user: User, status):
     events = get_events_by_subject(subject)
-    if status == 'добавление олимпиад по соответствующему предмету':
+    if status == 'add_olymp':
         for ev in events:
             user.events.add(ev)
     elif status == 'удаление олимпиад по соответствующему предмету':

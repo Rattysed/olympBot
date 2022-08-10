@@ -50,10 +50,11 @@ class Event(models.Model):  # События
 
 
 class Question(models.Model):
-    name = models.CharField('Название', max_length=150)
+    short_name = models.CharField('Краткое имя', max_length=50, default='blank_question')
+    full_name = models.CharField('Название', max_length=150, null=True)
 
     def __str__(self):
-        return self.name
+        return self.short_name
 
     class Meta:
         verbose_name = 'Вопрос'

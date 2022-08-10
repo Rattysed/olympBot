@@ -1,6 +1,5 @@
 import json
 import time
-import os
 import vk_api
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +15,7 @@ TOKEN = os.environ['TOKEN']
 
 @csrf_exempt
 def vk_bot(request):
+    QUESTIONS = DATA.questions
     if request.method == 'POST':
         data = json.loads(request.body)
         if data['secret'] == SECRET_KEY_VK:
@@ -25,51 +25,53 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
+
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
 
+                print(get_user_question(sender))
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
-                    change_user_question(sender, DATA.questions[0])
+                    change_user_question(sender, QUESTIONS[0])
                     COMMANDS_DICT['старт'].reply(sender, auth)
 
                 elif body.lower() == 'меню':
                     COMMANDS_DICT['меню'].reply(sender, auth)
-                    change_user_question(sender, DATA.questions[1])
+                    change_user_question(sender, QUESTIONS[1])
 
-                elif get_user_question(sender) == str(DATA.questions[0]):
+                elif get_user_question(sender) == str(QUESTIONS[0]):
                     if body.lower() in ['11', '10', '9', '8']:
                         change_user_grade(sender, int(body))
-                        change_user_question(sender, DATA.questions[1])
+                        change_user_question(sender, QUESTIONS[1])
                         COMMANDS_DICT['меню'].reply(sender, auth)
 
                 elif body.lower() == 'управление рассылкой' \
-                        and get_user_question(sender) == str(DATA.questions[1]):
-                    change_user_question(sender, DATA.questions[2])
+                        and get_user_question(sender) == str(QUESTIONS[1]):
+                    change_user_question(sender, QUESTIONS[2])
                     notifications(sender, auth)
                 elif body.lower() == 'включить рассылку' \
-                        and get_user_question(sender) == str(DATA.questions[1]):
+                        and get_user_question(sender) == str(QUESTIONS[1]):
                     turn_on_sending(sender)
                     COMMANDS_DICT['success'].reply(sender, auth)
                 elif body.lower() == 'отключить рассылку' \
-                        and get_user_question(sender) == str(DATA.questions[1]):
+                        and get_user_question(sender) == str(QUESTIONS[1]):
                     turn_off_sending(sender)
                     COMMANDS_DICT['success'].reply(sender, auth)
 
                 elif body.lower() == 'мои рассылки' \
-                        and get_user_question(sender) == str(DATA.questions[2]):
+                        and get_user_question(sender) == str(QUESTIONS[2]):
                     COMMANDS_DICT['мои рассылки'].reply(sender, auth, vk_id=True)
-                elif (body.lower() == 'добавить уведомления' or body.lower() == 'убрать уведомления')\
-                        and get_user_question(sender) == str(DATA.questions[2]):
+                elif (body.lower() == 'добавить уведомления' or body.lower() == 'убрать уведомления') \
+                        and get_user_question(sender) == str(QUESTIONS[2]):
                     COMMANDS_DICT['изменить уведомления по предметам'].reply(sender, auth)
-                    change_user_question(sender, DATA.questions[3 + (body.lower() == 'убрать уведомления')])
-                    print(get_user_question(sender))
+                    change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать уведомления')])
 
-                elif get_user_question(sender) == str(DATA.questions[3])\
-                        or get_user_question(sender) == str(DATA.questions[4]):
+
+                elif get_user_question(sender) == str(QUESTIONS[3]) \
+                        or get_user_question(sender) == str(QUESTIONS[4]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
@@ -77,7 +79,7 @@ def vk_bot(request):
                         user = get_user(str(sender))
                         chosen_sub = DATA.subjects[int(body) - 1]
                         change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
-                        change_user_question(sender, DATA.questions[1])
+                        change_user_question(sender, QUESTIONS[1])
                         COMMANDS_DICT['success'].reply(sender, auth)
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
