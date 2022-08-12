@@ -1,6 +1,7 @@
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from eventHandler.db_controller import *
+from typing import List, Union
 from vk_api import VkApi
 import os
 
@@ -17,9 +18,13 @@ class Command:
 
     def reply(self, sender, auth, vk=True, **kwargs):
         # TODO: Логгирование прям здесь
-
+        message = ''
+        print(kwargs)
+        print(kwargs.get('toggle_start', False))
         if kwargs.get('huynya_ebanaya', False):
             pass
+        elif kwargs.get('toggle_start', False):
+            message = self.action(sender, kwargs.get('chosen_option', -1))
         elif kwargs.get('vk_id', False):
             message = self.action(sender)
         else:
@@ -165,6 +170,20 @@ def make_distribution():
         send_info(vk_users, message, auth)
 
 
+def toggle_distribution(user_id: int, subject_id: int):
+    user = get_user(vk_id=str(user_id))
+    subject = DATA.subjects[subject_id - 1]
+    events = get_events_by_subject(subject)
+    output = "Выберите вариант из предложенных:\n\n1) Включить все\n\n2) Выключить все\n"
+    for n, ev in enumerate(events):
+        output += f"{n + 3}) {ev.name}"
+        if user.events.filter(id=ev.id):
+            output += '✅\n'
+        else:
+            output += '❎\n'
+    return output
+
+
 COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
     'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
@@ -175,4 +194,5 @@ COMMANDS_DICT = {
     'success': Command('success', action=lambda: "Успех!", vk_keyboard=keyboard_menu),
     'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
     'мои рассылки': Command('my_distributions', action=show_distributions),
+    'Настроить рассылку': Command('toggle_distribution', action=toggle_distribution)
 }

@@ -76,11 +76,12 @@ def vk_bot(request):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
                         # TODO: Создать функцию-обработчик изменений подписанных ивентов
-                        user = get_user(str(sender))
-                        chosen_sub = DATA.subjects[int(body) - 1]
-                        change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
-                        change_user_question(sender, QUESTIONS[1])
-                        COMMANDS_DICT['success'].reply(sender, auth)
+                        # user = get_user(str(sender))
+                        # chosen_sub = DATA.subjects[int(body) - 1]
+                        # change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
+                        # change_user_question(sender, QUESTIONS[1])
+                        COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
+                                                                                         chosen_option=int(body))
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
