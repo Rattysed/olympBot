@@ -84,13 +84,14 @@ def vk_bot(request):
                         change_user_chosen_subject(sender, int(body))
 
                 elif get_user_question(sender) == str(QUESTIONS[5]):
-                    if not 1 <= int(body.lower()) <= len(DATA.subjects):
+                    print(len(get_events_by_subject(get_user_chosen_subject(sender))) + 2)
+                    if not 1 <= int(body.lower()) <= len(get_events_by_subject(get_user_chosen_subject(sender))) + 2:
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
                         change_user_events(sender, int(body))
                         COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=(generate_list(DATA.subjects).index(
-                                                                      get_user_chosen_subject(sender)) + 1))
+                                                                      str(get_user_chosen_subject(sender))) + 1))
 
                 else:
                     change_user_question(sender, QUESTIONS[1])

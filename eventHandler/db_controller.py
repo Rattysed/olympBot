@@ -55,7 +55,7 @@ def get_user_question(vk_id):
 
 def get_user_chosen_subject(vk_id):
     user = get_user(vk_id=vk_id)
-    return str(user.chosen_option)
+    return user.chosen_option
 
 
 def get_events_of_user(vk_id):
@@ -114,8 +114,17 @@ def change_user_events(vk_id, chosen_option: int):
         for ev in events:
             user.events.remove(ev)
     else:
-        user.events.add(events[chosen_option - 3])
-    print(events[0])
+        events_of_user = get_events_of_user(vk_id).get(str(subject), [])
+        formatted_events_of_user = set()
+        for el in events_of_user:
+            formatted_events_of_user.add(str(el))
+        print(formatted_events_of_user)
+
+        if str(events[chosen_option - 3]) not in formatted_events_of_user:
+            user.events.add(events[chosen_option - 3])
+        else:
+            user.events.remove(events[chosen_option - 3])
+    user.save()
 
 
 def change_user_chosen_subject(sender: str, subject_id: int):
