@@ -7,7 +7,3 @@ QUESTS = {
     'toggle_event': 'Изменить статус рассылки ивентов',
     'remove_event': 'Удалить ивент из рассылки',
 }
-
-
-# for i in QUESTS:
-#     print(i, QUESTS[i])

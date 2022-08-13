@@ -39,11 +39,12 @@ class Command:
 
 
 keyboard_menu = VkKeyboard(one_time=False)
+keyboard_menu.add_button('Текущие регистрации', color=VkKeyboardColor.PRIMARY)
+keyboard_menu.add_line()
 keyboard_menu.add_button('Управление рассылкой', color=VkKeyboardColor.PRIMARY)
 keyboard_menu.add_line()
-keyboard_menu.add_button('Включить рассылку', color=VkKeyboardColor.POSITIVE)
-keyboard_menu.add_line()
-keyboard_menu.add_button('Отключить рассылку', color=VkKeyboardColor.NEGATIVE)
+keyboard_menu.add_button('🔔', color=VkKeyboardColor.SECONDARY)
+keyboard_menu.add_button('🔕', color=VkKeyboardColor.SECONDARY)
 
 keyboard_send_menu = VkKeyboard(one_time=False)
 keyboard_send_menu.add_button('Меню', color=VkKeyboardColor.PRIMARY)
@@ -114,7 +115,7 @@ def show_distributions(sender):
     if not is_dist:
         output += '❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
                   ' Чтобы ее включить, перейдите ' \
-                  'в меню и нажмите кнопку "Включить рассылку" \n\n'
+                  'в меню и нажмите кнопку "🔔" \n\n'
     if len(events_of_user.keys()) == 0:
         output = 'Рассылок нет.'
     for sub in DATA.subjects[:]:
@@ -174,7 +175,7 @@ def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
         if not is_dist:
             output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
                       ' Чтобы ее включить, перейдите ' \
-                      'в меню и нажмите кнопку "Включить рассылку" \n\n'
+                      'в меню и нажмите кнопку "🔔" \n\n'
         return output
     else:
         n = 1
@@ -190,7 +191,7 @@ def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
         if not is_dist:
             output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
                       ' Чтобы ее включить, перейдите ' \
-                      'в меню и нажмите кнопку "Включить рассылку" \n\n'
+                      'в меню и нажмите кнопку "🔔" \n\n'
         return output
 
 
@@ -206,4 +207,10 @@ COMMANDS_DICT = {
     'мои рассылки': Command('my_distributions', action=show_distributions),
     'настроить рассылку': Command('toggle_distribution', action=toggle_distribution),
     'меню уведомлений': Command('notification_menu', action=notifications, vk_keyboard=keyboard_notif),
+    'раздел недоступен': Command('permission_denied', action=lambda: 'Ошибка. Данный раздел'
+                                                                     ' доступен только в платной версии',
+                                 vk_keyboard=keyboard_menu),
+    'в разработке': Command('waiting_for_prod', action=lambda: "К сожалению, данный раздел находится"
+                                                               " в стадии разработки, приходите сюда позже :)",
+                            vk_keyboard=keyboard_menu),
 }

@@ -47,15 +47,19 @@ def vk_bot(request):
                         change_user_question(sender, QUESTIONS[1])
                         COMMANDS_DICT['меню'].reply(sender, auth)
 
+                elif body.lower() == 'текущие регистрации' \
+                        and get_user_question(sender) == str(QUESTIONS[1]):
+                    COMMANDS_DICT['в разработке'].reply(sender, auth)
+
                 elif body.lower() == 'управление рассылкой' \
                         and get_user_question(sender) == str(QUESTIONS[1]):
                     change_user_question(sender, QUESTIONS[2])
                     COMMANDS_DICT['меню уведомлений'].reply(sender, auth)
-                elif body.lower() == 'включить рассылку' \
+                elif body.lower() == '🔔' \
                         and get_user_question(sender) == str(QUESTIONS[1]):
                     turn_on_sending(sender)
                     COMMANDS_DICT['success'].reply(sender, auth)
-                elif body.lower() == 'отключить рассылку' \
+                elif body.lower() == '🔕' \
                         and get_user_question(sender) == str(QUESTIONS[1]):
                     turn_off_sending(sender)
                     COMMANDS_DICT['success'].reply(sender, auth)
