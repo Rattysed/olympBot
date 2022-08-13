@@ -71,6 +71,7 @@ class User(models.Model):
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
     events = models.ManyToManyField(Event)
     current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
+    chosen_option = models.ForeignKey(Subject, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"{self.vk_id} - {self.tg_id}"

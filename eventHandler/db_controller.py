@@ -53,6 +53,11 @@ def get_user_question(vk_id):
     return str(user.current_question)
 
 
+def get_user_chosen_subject(vk_id):
+    user = get_user(vk_id=vk_id)
+    return str(user.chosen_option)
+
+
 def get_events_of_user(vk_id):
     events_of_user_sorted = dict()
     user = get_user(vk_id=vk_id)
@@ -65,6 +70,12 @@ def get_events_of_user(vk_id):
                 events_of_user_sorted[sub.name] = []
             events_of_user_sorted[sub.name].append(ev)
     return events_of_user_sorted
+
+
+def generate_list(data):
+    listed = []
+    [listed.append(str(x)) for x in data]
+    return listed
 
 
 def is_user_in_database(tg_id='', vk_id=''):
@@ -92,8 +103,15 @@ def change_user_question(vk_id, question):
     user.save()
 
 
-def change_user_events(user: User, subject: Subject, chosen_number):
+def change_user_events(sender: str, chosen_option: int):
     pass
+
+
+def change_user_chosen_subject(sender: str, subject_id: int):
+    user = get_user(vk_id=sender)
+    subject = DATA.subjects[subject_id - 1]
+    user.chosen_option = subject
+    user.save()
 
 
 def turn_on_sending(vk_id):
@@ -106,15 +124,6 @@ def turn_off_sending(vk_id):
     user = get_user(vk_id=vk_id)
     user.is_rassylka = 0
     user.save()
-
-
-def change_events_by_subject(subject: Subject, user: User, status):
-    events = get_events_by_subject(subject)
-    if status == 'add_olymp':
-        for ev in events:
-            user.events.add(ev)
-    elif status == 'удаление олимпиад по соответствующему предмету':
-        pass
 
 
 def create_new_vk_user(id, grade):

@@ -170,9 +170,9 @@ def make_distribution():
         send_info(vk_users, message, auth)
 
 
-def toggle_distribution(user_id: int, subject_id: int):
+def toggle_distribution(user_id: int, chosen_subject: int):
     user = get_user(vk_id=str(user_id))
-    subject = DATA.subjects[subject_id - 1]
+    subject = DATA.subjects[chosen_subject - 1]
     events = get_events_by_subject(subject)
     output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"
     for n, ev in enumerate(events):

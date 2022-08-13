@@ -25,13 +25,14 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
+                # update_db()
+                print(DATA.subjects)
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
 
-                print(get_user_question(sender))
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
                     change_user_question(sender, QUESTIONS[0])
@@ -73,7 +74,6 @@ def vk_bot(request):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
-                        # TODO: Создать функцию-обработчик изменений подписанных ивентов
                         # user = get_user(str(sender))
                         # chosen_sub = DATA.subjects[int(body) - 1]
                         # change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
@@ -81,14 +81,19 @@ def vk_bot(request):
                         COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=int(body))
                         change_user_question(sender, QUESTIONS[5])
-                        # write_message(sender, 'Параметры рассылки обновлены!', auth)
+                        change_user_chosen_subject(sender, int(body))
+
                 elif get_user_question(sender) == str(QUESTIONS[5]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
-                        print('я тут!')
+                        # TODO: обработчик toggle ивентов
+                        COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
+                                                                  chosen_option=(generate_list(DATA.subjects).index(
+                                                                      get_user_chosen_subject(sender)) + 1))
 
                 else:
+                    change_user_question(sender, QUESTIONS[1])
                     COMMANDS_DICT['wrong'].reply(sender, auth)
 
     return SUCCESS
