@@ -24,7 +24,10 @@ class Command:
         if kwargs.get('huynya_ebanaya', False):
             pass
         elif kwargs.get('toggle_start', False):
-            message = self.action(sender, kwargs.get('chosen_option', -1))
+            if kwargs.get('remove', False):
+                message = self.action(sender, kwargs.get('chosen_option', -1), remove=True)
+            else:
+                message = self.action(sender, kwargs.get('chosen_option', -1))
         elif kwargs.get('vk_id', False):
             message = self.action(sender)
         else:
@@ -138,7 +141,6 @@ def test_action(vk_id='', tg_id=''):
 def make_distribution():
     auth = VkApi(token=TOKEN)
     events = get_all_today()
-    print(len(events))
     for event in events:
         users = event.user_set.all()
         tg_users = set()
@@ -155,23 +157,41 @@ def make_distribution():
         send_info(vk_users, message, auth)
 
 
-def toggle_distribution(user_id: int, chosen_subject: int):
+def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
     user = get_user(vk_id=str(user_id))
     subject = DATA.subjects[chosen_subject - 1]
     events = get_events_by_subject(subject)
-    output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"
-    for n, ev in enumerate(events):
-        output += f"{n + 3}) {ev.name}"
-        if user.events.filter(id=ev.id):
-            output += ' ✅\n'
-        else:
-            output += ' 🚫\n'
-    is_dist = is_distribution(user_id)
-    if not is_dist:
-        output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
-                  ' Чтобы ее включить, перейдите ' \
-                  'в меню и нажмите кнопку "Включить рассылку" \n\n'
-    return output
+    is_remove = kwargs.get('remove', False)
+    if not is_remove:
+        output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"
+        for n, ev in enumerate(events):
+            output += f"{n + 3}) {ev.name}"
+            if user.events.filter(id=ev.id):
+                output += ' ✅\n'
+            else:
+                output += ' 🚫\n'
+        is_dist = is_distribution(user_id)
+        if not is_dist:
+            output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
+                      ' Чтобы ее включить, перейдите ' \
+                      'в меню и нажмите кнопку "Включить рассылку" \n\n'
+        return output
+    else:
+        n = 1
+        output = 'Выберите вариант из предложенных (выбранная олимпиада будет удалена из вашей рассылки):\n\n'
+        for ev in events:
+            if user.events.filter(id=ev.id):
+                output += f"{n}) {ev.name}"
+                output += ' ✅\n'
+                n += 1
+        if n == 1:
+            return 'У вас нет активных рассылок по этому предмету.'
+        is_dist = is_distribution(user_id)
+        if not is_dist:
+            output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
+                      ' Чтобы ее включить, перейдите ' \
+                      'в меню и нажмите кнопку "Включить рассылку" \n\n'
+        return output
 
 
 COMMANDS_DICT = {
@@ -182,8 +202,8 @@ COMMANDS_DICT = {
     'изменить уведомления по предметам': Command('change_notification_sub', action=subject_notification,
                                                  vk_keyboard=keyboard_send_menu),
     'success': Command('success', action=lambda: "Параметры обновлены!", vk_keyboard=keyboard_menu),
-    'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
+    'failure': Command('failure', action=lambda: "Ошибка. Введенное значение не принадлежит допустимому диапазону."),
     'мои рассылки': Command('my_distributions', action=show_distributions),
     'настроить рассылку': Command('toggle_distribution', action=toggle_distribution),
-    'меню уведомлений': Command('notification_menu', action=notifications, vk_keyboard=keyboard_notif)
+    'меню уведомлений': Command('notification_menu', action=notifications, vk_keyboard=keyboard_notif),
 }

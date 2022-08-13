@@ -166,6 +166,14 @@ def create_new_user(grade: int, vk_id='', tg_id=''):
     user.save()
 
 
+def remove_user_events(vk_id, chosen_option: int):
+    user = get_user(vk_id=vk_id)
+    subject = user.chosen_option
+    events = list(get_events_by_subject(subject))
+    user.events.remove(events[chosen_option - 1])
+    user.save()
+
+
 def update_db():
     i = 1
     for q in QUESTS:
@@ -175,7 +183,6 @@ def update_db():
         }
         Question.objects.update_or_create(id=i, defaults=values)
         i += 1
-    print('ХУЙ')
 
 
 if __name__ == '__main__':

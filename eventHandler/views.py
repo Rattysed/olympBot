@@ -25,8 +25,7 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
-                # update_db()
-                print(DATA.subjects)
+                update_db()
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
@@ -71,17 +70,19 @@ def vk_bot(request):
 
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):
+                    # print(get_user_question(sender))
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
-                        # user = get_user(str(sender))
-                        # chosen_sub = DATA.subjects[int(body) - 1]
-                        # change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
-                        # change_user_question(sender, QUESTIONS[1])
-                        COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
-                                                                  chosen_option=int(body))
-                        change_user_question(sender, QUESTIONS[5])
                         change_user_chosen_subject(sender, int(body))
+                        if get_user_question(sender) == str(QUESTIONS[3]):
+                            COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
+                                                                      chosen_option=int(body))
+                            change_user_question(sender, QUESTIONS[5])
+                        elif get_user_question(sender) == str(QUESTIONS[4]):
+                            COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
+                                                                      chosen_option=int(body), remove=True)
+                            change_user_question(sender, QUESTIONS[6])
 
                 elif get_user_question(sender) == str(QUESTIONS[5]):
                     if not 1 <= int(body.lower()) <= len(get_events_by_subject(get_user_chosen_subject(sender))) + 2:
@@ -91,6 +92,16 @@ def vk_bot(request):
                         COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=(generate_list(DATA.subjects).index(
                                                                       str(get_user_chosen_subject(sender))) + 1))
+                elif get_user_question(sender) == str(QUESTIONS[6]):
+                    if not 1 <= int(body.lower()) <= len(
+                            get_events_of_user(sender).get(str(get_user_chosen_subject(sender)), [])):
+                        COMMANDS_DICT['failure'].reply(sender, auth)
+                    else:
+                        remove_user_events(sender, int(body))
+                        COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
+                                                                  chosen_option=(generate_list(DATA.subjects).index(
+                                                                      str(get_user_chosen_subject(sender))) + 1),
+                                                                  remove=True)
 
                 else:
                     # change_user_question(sender, QUESTIONS[1])
