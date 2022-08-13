@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
-from eventHandler.db_controller import DATA
+from eventHandler.db_controller import DATA, update_db
 from eventHandler.vk_bot.vk_functions import make_distribution
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 def my_job():
     print('Писька')
     # DATA.update_data()
+    update_db()
     make_distribution()
     pass
 

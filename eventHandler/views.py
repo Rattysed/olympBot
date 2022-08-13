@@ -25,6 +25,7 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
+                update_db()
 
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
@@ -81,7 +82,13 @@ def vk_bot(request):
                         # change_user_question(sender, QUESTIONS[1])
                         COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=int(body))
+                        change_user_question(sender, QUESTIONS[5])
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
+                elif get_user_question(sender) == str(QUESTIONS[5]):
+                    if not 1 <= int(body.lower()) <= len(DATA.subjects):
+                        COMMANDS_DICT['failure'].reply(sender, auth)
+                    else:
+                        print('я тут!')
 
                 else:
                     COMMANDS_DICT['wrong'].reply(sender, auth)

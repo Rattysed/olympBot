@@ -2,6 +2,7 @@ import datetime
 from typing import Union, List
 from django.db.models import QuerySet
 from .models import Event, User, Subject, Question
+from eventHandler.vk_bot.vk_config import QUESTS
 
 
 class CollectedData:
@@ -91,6 +92,10 @@ def change_user_question(vk_id, question):
     user.save()
 
 
+def change_user_events(user: User, subject: Subject, chosen_number):
+    pass
+
+
 def turn_on_sending(vk_id):
     user = get_user(vk_id=vk_id)
     user.is_rassylka = 1
@@ -130,6 +135,18 @@ def create_new_user(grade: int, vk_id='', tg_id=''):
     user.is_rassylka = 1
     user.current_question = DATA.questions[0]
     user.save()
+
+
+def update_db():
+    i = 1
+    for q in QUESTS:
+        values = {
+            'short_name': q,
+            'full_name': QUESTS[q],
+        }
+        Question.objects.update_or_create(id=i, defaults=values)
+        i += 1
+    print('ХУЙ')
 
 
 if __name__ == '__main__':

@@ -174,13 +174,13 @@ def toggle_distribution(user_id: int, subject_id: int):
     user = get_user(vk_id=str(user_id))
     subject = DATA.subjects[subject_id - 1]
     events = get_events_by_subject(subject)
-    output = "Выберите вариант из предложенных:\n\n1) Включить все\n\n2) Выключить все\n"
+    output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"
     for n, ev in enumerate(events):
         output += f"{n + 3}) {ev.name}"
         if user.events.filter(id=ev.id):
-            output += '✅\n'
+            output += ' ✅\n'
         else:
-            output += '❎\n'
+            output += ' 🚫\n'
     return output
 
 
@@ -191,7 +191,7 @@ COMMANDS_DICT = {
     'wrong': Command('error', action=error_message, vk_keyboard=keyboard_menu),
     'изменить уведомления по предметам': Command('change_notification_sub', action=subject_notification,
                                                  vk_keyboard=keyboard_send_menu),
-    'success': Command('success', action=lambda: "Успех!", vk_keyboard=keyboard_menu),
+    'success': Command('success', action=lambda: "Параметры обновлены!", vk_keyboard=keyboard_menu),
     'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
     'мои рассылки': Command('my_distributions', action=show_distributions),
     'Настроить рассылку': Command('toggle_distribution', action=toggle_distribution)
