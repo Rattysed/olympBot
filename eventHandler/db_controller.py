@@ -112,8 +112,6 @@ def change_events_by_subject(subject: Subject, user: User, status):
         pass
 
 
-
-
 def create_new_vk_user(id, grade):
     create_new_user(grade, vk_id=id)
 

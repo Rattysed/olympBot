@@ -69,7 +69,6 @@ def vk_bot(request):
                     COMMANDS_DICT['изменить уведомления по предметам'].reply(sender, auth)
                     change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать уведомления')])
 
-
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
@@ -81,7 +80,7 @@ def vk_bot(request):
                         # change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
                         # change_user_question(sender, QUESTIONS[1])
                         COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
-                                                                                         chosen_option=int(body))
+                                                                  chosen_option=int(body))
                         # write_message(sender, 'Параметры рассылки обновлены!', auth)
 
                 else:
