@@ -5,7 +5,7 @@ from typing import List, Union
 from vk_api import VkApi
 import os
 
-local_data = {}
+TOKEN = os.environ['TOKEN']
 
 
 class Command:
@@ -54,8 +54,8 @@ keyboard_choose.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 keyboard_notif = VkKeyboard(one_time=False)
 keyboard_notif.add_button('Мои рассылки', color=VkKeyboardColor.PRIMARY)
 keyboard_notif.add_line()
-keyboard_notif.add_button('Добавить уведомления', color=VkKeyboardColor.SECONDARY)
-keyboard_notif.add_button('Убрать уведомления', color=VkKeyboardColor.SECONDARY)
+keyboard_notif.add_button('Добавить/изменить', color=VkKeyboardColor.POSITIVE)
+keyboard_notif.add_button('Убрать', color=VkKeyboardColor.NEGATIVE)
 keyboard_notif.add_line()
 keyboard_notif.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
@@ -65,11 +65,6 @@ keyboard_grades.add_button('10', color=VkKeyboardColor.SECONDARY)
 keyboard_grades.add_line()
 keyboard_grades.add_button('9', color=VkKeyboardColor.SECONDARY)
 keyboard_grades.add_button('8', color=VkKeyboardColor.SECONDARY)
-
-
-def write_message_with_menu(sender, message, auth):  # функция отправки сообщения + высвечивание кнопки перехода в меню
-    auth.method('messages.send', {'user_id': sender, 'message': message,
-                                  'random_id': get_random_id(), 'keyboard': keyboard_send_menu.get_keyboard()})
 
 
 def vk_write_message(sender, auth, message,
@@ -82,15 +77,19 @@ def vk_write_message(sender, auth, message,
 
 
 def ask_about_grades():
-    return 'В каком вы сейчас классе?'
+    return '(Тут будет красивое приветствие + вопрос про класс обучения)'
 
 
 def send_menu():  # стандартное меню
-    return 'Типа меню'
+    return '(Тут будет описание кнопок и основные принципы работы бота)'
 
 
 def error_message():
-    return 'Неизвестная команда'
+    return 'Неизвестная команда!'
+
+
+def notifications():  # меню управления уведомлениями
+    return 'Красивое описание кнопочек управления уведомлениями'
 
 
 def subject_notification():
@@ -100,7 +99,7 @@ def subject_notification():
     for sub in all_subs:
         output += str(i) + ') ' + str(sub) + '\n'
         i += 1
-    output += '\n(Напишите в чат предмет или соответствующую ему цифру)'
+    output += '\n(Напишите в чат цифру)'
     return output
 
 
@@ -110,7 +109,9 @@ def show_distributions(sender):
     is_dist = is_distribution(sender)
     output = 'Ваши рассылки:\n\n'
     if not is_dist:
-        output += '❗ У вас отключена рассылка ❗\n\n'
+        output += '❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
+                  ' Чтобы ее включить, перейдите ' \
+                  'в меню и нажмите кнопку "Включить рассылку" \n\n'
     if len(events_of_user.keys()) == 0:
         output = 'Рассылок нет.'
     for sub in DATA.subjects[:]:
@@ -121,29 +122,13 @@ def show_distributions(sender):
         output += f'{sub.name}:\n'
         for num, ev in enumerate(evs):
             output += f'\t{num + 1}) {ev.name}\n'
-    if not is_dist:
-        output += '\n❗ У вас отключена рассылка ❗'
     return output
 
 
-def choose_subjects(sender, auth):  # меню добавления предметов для рассылки
-    auth.method('messages.send', {'user_id': sender, 'message': 'Отлично!\n Выберите предмет, по которому'
-                                                                ' хотите получать уведомления.',
-                                  'random_id': get_random_id(), 'keyboard': keyboard_choose.get_keyboard()})
-
-
-def notifications(sender, auth):  # меню управления уведомлениями
-    auth.method('messages.send', {'user_id': sender, 'message': 'Заглушка',
-                                  'random_id': get_random_id(), 'keyboard': keyboard_notif.get_keyboard()})
-
-
-def send_info(senders, message, auth):
+def send_info(senders, message, auth):  # ФУНКЦИЯ РАССЫЛКИ
     for sender in senders:
         auth.method('messages.send', {'user_id': sender, 'message': message,
                                       'random_id': get_random_id()})
-
-
-TOKEN = os.environ['TOKEN']
 
 
 def test_action(vk_id='', tg_id=''):
@@ -181,6 +166,11 @@ def toggle_distribution(user_id: int, chosen_subject: int):
             output += ' ✅\n'
         else:
             output += ' 🚫\n'
+    is_dist = is_distribution(user_id)
+    if not is_dist:
+        output += '\n❗Внимание: Для того, чтобы вам приходили оповещения, необходимо включить рассылку.' \
+                  ' Чтобы ее включить, перейдите ' \
+                  'в меню и нажмите кнопку "Включить рассылку" \n\n'
     return output
 
 
@@ -188,11 +178,12 @@ COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
     'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
     'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
-    'wrong': Command('error', action=error_message, vk_keyboard=keyboard_menu),
+    'wrong': Command('error', action=error_message),
     'изменить уведомления по предметам': Command('change_notification_sub', action=subject_notification,
                                                  vk_keyboard=keyboard_send_menu),
     'success': Command('success', action=lambda: "Параметры обновлены!", vk_keyboard=keyboard_menu),
     'failure': Command('failure', action=lambda: "Ошибка. Неверное значение"),
     'мои рассылки': Command('my_distributions', action=show_distributions),
-    'Настроить рассылку': Command('toggle_distribution', action=toggle_distribution)
+    'настроить рассылку': Command('toggle_distribution', action=toggle_distribution),
+    'меню уведомлений': Command('notification_menu', action=notifications, vk_keyboard=keyboard_notif)
 }

@@ -51,7 +51,7 @@ def vk_bot(request):
                 elif body.lower() == 'управление рассылкой' \
                         and get_user_question(sender) == str(QUESTIONS[1]):
                     change_user_question(sender, QUESTIONS[2])
-                    notifications(sender, auth)
+                    COMMANDS_DICT['меню уведомлений'].reply(sender, auth)
                 elif body.lower() == 'включить рассылку' \
                         and get_user_question(sender) == str(QUESTIONS[1]):
                     turn_on_sending(sender)
@@ -64,10 +64,10 @@ def vk_bot(request):
                 elif body.lower() == 'мои рассылки' \
                         and get_user_question(sender) == str(QUESTIONS[2]):
                     COMMANDS_DICT['мои рассылки'].reply(sender, auth, vk_id=True)
-                elif (body.lower() == 'добавить уведомления' or body.lower() == 'убрать уведомления') \
+                elif (body.lower() == 'добавить/изменить' or body.lower() == 'убрать') \
                         and get_user_question(sender) == str(QUESTIONS[2]):
                     COMMANDS_DICT['изменить уведомления по предметам'].reply(sender, auth)
-                    change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать уведомления')])
+                    change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать')])
 
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):
@@ -78,23 +78,22 @@ def vk_bot(request):
                         # chosen_sub = DATA.subjects[int(body) - 1]
                         # change_events_by_subject(chosen_sub, user, get_user_question(sender).lower())
                         # change_user_question(sender, QUESTIONS[1])
-                        COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
+                        COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=int(body))
                         change_user_question(sender, QUESTIONS[5])
                         change_user_chosen_subject(sender, int(body))
 
                 elif get_user_question(sender) == str(QUESTIONS[5]):
-                    print(len(get_events_by_subject(get_user_chosen_subject(sender))) + 2)
                     if not 1 <= int(body.lower()) <= len(get_events_by_subject(get_user_chosen_subject(sender))) + 2:
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
                         change_user_events(sender, int(body))
-                        COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
+                        COMMANDS_DICT['настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=(generate_list(DATA.subjects).index(
                                                                       str(get_user_chosen_subject(sender))) + 1))
 
                 else:
-                    change_user_question(sender, QUESTIONS[1])
+                    # change_user_question(sender, QUESTIONS[1])
                     COMMANDS_DICT['wrong'].reply(sender, auth)
 
     return SUCCESS
