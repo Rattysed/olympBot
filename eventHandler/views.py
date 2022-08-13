@@ -87,7 +87,7 @@ def vk_bot(request):
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
-                        # TODO: обработчик toggle ивентов
+                        change_user_events(sender, int(body))
                         COMMANDS_DICT['Настроить рассылку'].reply(sender, auth, toggle_start=True,
                                                                   chosen_option=(generate_list(DATA.subjects).index(
                                                                       get_user_chosen_subject(sender)) + 1))

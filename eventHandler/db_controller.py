@@ -103,8 +103,19 @@ def change_user_question(vk_id, question):
     user.save()
 
 
-def change_user_events(sender: str, chosen_option: int):
-    pass
+def change_user_events(vk_id, chosen_option: int):
+    user = get_user(vk_id=vk_id)
+    subject = user.chosen_option
+    events = list(get_events_by_subject(subject))
+    if chosen_option == 1:
+        for ev in events:
+            user.events.add(ev)
+    elif chosen_option == 2:
+        for ev in events:
+            user.events.remove(ev)
+    else:
+        user.events.add(events[chosen_option - 3])
+    print(events[0])
 
 
 def change_user_chosen_subject(sender: str, subject_id: int):
