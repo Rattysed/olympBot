@@ -35,7 +35,8 @@ def vk_bot(request):
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
                     change_user_question(sender, QUESTIONS[0])
-                    COMMANDS_DICT['старт'].reply(sender, auth)
+                    COMMANDS_DICT['приветствие'].reply(sender, auth)
+                    COMMANDS_DICT['сменить класс'].reply(sender, auth)
 
                 elif body.lower() == 'меню':
                     COMMANDS_DICT['меню'].reply(sender, auth)
@@ -71,6 +72,10 @@ def vk_bot(request):
                         and get_user_question(sender) == str(QUESTIONS[2]):
                     COMMANDS_DICT['изменить уведомления по предметам'].reply(sender, auth)
                     change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать')])
+                elif body.lower() == 'сменить класс' \
+                        and get_user_question(sender) == str(QUESTIONS[2]):
+                    change_user_question(sender, QUESTIONS[0])
+                    COMMANDS_DICT['сменить класс'].reply(sender, auth)
 
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):

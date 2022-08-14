@@ -61,6 +61,7 @@ keyboard_notif.add_line()
 keyboard_notif.add_button('Добавить/изменить', color=VkKeyboardColor.POSITIVE)
 keyboard_notif.add_button('Убрать', color=VkKeyboardColor.NEGATIVE)
 keyboard_notif.add_line()
+keyboard_notif.add_button('Сменить класс', color=VkKeyboardColor.SECONDARY)
 keyboard_notif.add_button('Меню', color=VkKeyboardColor.PRIMARY)
 
 keyboard_grades = VkKeyboard(one_time=False)
@@ -81,7 +82,7 @@ def vk_write_message(sender, auth, message,
 
 
 def ask_about_grades():
-    return '(Тут будет красивое приветствие + вопрос про класс обучения)'
+    return 'В каком классе ты учишься?'
 
 
 def send_menu():  # стандартное меню
@@ -197,7 +198,7 @@ def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
 
 COMMANDS_DICT = {
     'тест': Command('тест', action=test_action, keyword='тест'),
-    'старт': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
+    'сменить класс': Command('ask_about_grades', action=ask_about_grades, vk_keyboard=keyboard_grades),
     'меню': Command('menu', action=send_menu, vk_keyboard=keyboard_menu),
     'wrong': Command('error', action=error_message),
     'изменить уведомления по предметам': Command('change_notification_sub', action=subject_notification,
@@ -213,4 +214,5 @@ COMMANDS_DICT = {
     'в разработке': Command('waiting_for_prod', action=lambda: "К сожалению, данный раздел находится"
                                                                " в стадии разработки, приходите сюда позже :)",
                             vk_keyboard=keyboard_menu),
+    'приветствие': Command('hello', action=lambda: "Типо приветствие", vk_keyboard=keyboard_menu),
 }
