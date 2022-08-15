@@ -27,6 +27,11 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('vk_id', 'tg_id')
 
 
+class SubEventAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'grade', 'period', 'org_type')
+    search_fields = ('id', 'name')
+
+
 admin.site.register(Subject, ProfileSubjectAdmin)
 admin.site.register(Profile, ProfileSubjectAdmin)
 admin.site.register(Question, QuestionAdmin)

@@ -50,7 +50,6 @@ class Event(models.Model):  # События
         verbose_name_plural = 'События'
         ordering = ['level']
 
-
 class SubEvent(models.Model):
     name = models.CharField('Название', max_length=100)
     main_event = models.ForeignKey(Event, blank=True, null=True, on_delete=models.SET_NULL)
