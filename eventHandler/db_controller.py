@@ -1,21 +1,25 @@
 import datetime
 from typing import Union, List
 from django.db.models import QuerySet
-from .models import Event, User, Subject, Question
+from .models import *
 from eventHandler.vk_bot.vk_config import QUESTS
 
 
 class CollectedData:
     subject_query: Union[QuerySet, List[Subject]] = None
     question_query: Union[QuerySet, List[Question]] = None
+    profile_query: Union[QuerySet, List[Question]] = None
     subjects: List = []
     questions: List = []
+    profiles: List = []
 
     def update_data(self):
         self.subject_query = Subject.objects.all()
         self.question_query = Question.objects.all()
+        self.profile_query = Question.objects.all()
         self.subjects = list(self.subject_query)
         self.questions = list(self.question_query)
+        self.profiles = list(self.question_query)
 
 
 DATA = CollectedData()
@@ -41,6 +45,14 @@ def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
     return events
 
 
+def get_subevents_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
+    user = get_user(vk_id=vk_id)
+    subevents = SubEvent.objects.filter(main_event__subject=subject, grade=user.grade)
+    # for subev in subevents:
+    #     print(subev.name)  <----- это получение нормального блять названия саб ивента
+    return subevents
+
+
 def get_user(vk_id='', tg_id=''):
     if vk_id == tg_id == '':
         raise ValueError("Can't find user without any messanger account")
@@ -58,17 +70,28 @@ def get_user_chosen_subject(vk_id):
     return user.chosen_option
 
 
+def get_main_events_of_user(vk_id):
+    user = get_user(vk_id=vk_id)
+    mains = []
+    events = user.events.all()
+    for ev in events:
+        mains.append(ev.main_event)
+    print(mains)
+    return mains
+
+
 def get_events_of_user(vk_id):
     events_of_user_sorted = dict()
     user = get_user(vk_id=vk_id)
     subjects = list(get_subjects())
-    events = user.events.all()
     for sub in subjects:
-        sub_events = events.filter(subject=sub)
+        sub_events = get_subevents_by_subject_and_grade(vk_id, sub)
         for ev in sub_events:
-            if not events_of_user_sorted.get(sub.name, False):
-                events_of_user_sorted[sub.name] = []
-            events_of_user_sorted[sub.name].append(ev)
+
+            if ev in user.events.all():
+                if not events_of_user_sorted.get(sub.name, False):
+                    events_of_user_sorted[sub.name] = []
+                events_of_user_sorted[sub.name].append(ev)
     return events_of_user_sorted
 
 
@@ -106,7 +129,7 @@ def change_user_question(vk_id, question):
 def change_user_events(vk_id, chosen_option: int):
     user = get_user(vk_id=vk_id)
     subject = user.chosen_option
-    events = list(get_events_by_subject(subject))
+    events = list(get_subevents_by_subject_and_grade(vk_id, subject))
     if chosen_option == 1:
         for ev in events:
             user.events.add(ev)

@@ -109,7 +109,7 @@ def subject_notification():
 
 
 def show_distributions(sender):
-    events_of_user = get_events_of_user(sender)  # set of tuples
+    events_of_user = get_events_of_user(sender)
     print(events_of_user)
     is_dist = is_distribution(sender)
     output = 'Ваши рассылки:\n\n'
@@ -163,7 +163,7 @@ def make_distribution():
 def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
     user = get_user(vk_id=str(user_id))
     subject = DATA.subjects[chosen_subject - 1]
-    events = get_events_by_subject(subject)
+    events = get_subevents_by_subject_and_grade(str(user_id), subject)
     is_remove = kwargs.get('remove', False)
     if not is_remove:
         output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"

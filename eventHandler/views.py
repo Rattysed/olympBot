@@ -31,6 +31,7 @@ def vk_bot(request):
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
+                print(get_main_events_of_user(sender))
 
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)
@@ -79,7 +80,7 @@ def vk_bot(request):
 
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):
-                    # print(get_user_question(sender))
+                    print(get_subevents_by_subject_and_grade(sender, get_user_chosen_subject(sender)))
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
@@ -94,6 +95,7 @@ def vk_bot(request):
                             change_user_question(sender, QUESTIONS[6])
 
                 elif get_user_question(sender) == str(QUESTIONS[5]):
+                    print(get_events_of_user(sender))
                     if not 1 <= int(body.lower()) <= len(get_events_by_subject(get_user_chosen_subject(sender))) + 2:
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:

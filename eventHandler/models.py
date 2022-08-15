@@ -50,6 +50,7 @@ class Event(models.Model):  # События
         verbose_name_plural = 'События'
         ordering = ['level']
 
+
 class SubEvent(models.Model):
     name = models.CharField('Название', max_length=100)
     main_event = models.ForeignKey(Event, blank=True, null=True, on_delete=models.SET_NULL)
@@ -79,7 +80,7 @@ class User(models.Model):
     grade = models.IntegerField('Класс пользователя', null=True)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
-    events = models.ManyToManyField(Event)
+    events = models.ManyToManyField(SubEvent)
     current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
     chosen_option = models.ForeignKey(Subject, on_delete=models.SET_NULL, blank=True, null=True)
 
