@@ -7,9 +7,6 @@ from .forms import EventForm
 from .vk_bot.vk_functions import *
 from .db_controller import *
 
-
-
-
 SUCCESS = HttpResponse('ok', content_type='text/plain', status=200)
 SECRET_KEY_VK = os.environ['SECRET_KEY_VK']
 CONFIRMATION_TOKEN = os.environ['CONFIRMATION_TOKEN']
