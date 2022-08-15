@@ -124,36 +124,7 @@ def test(request):
         return HttpResponseRedirect("/admin")
 
     if request.method == 'POST':
-        eventForm = EventForm(request.POST)
-        if eventForm.is_valid():
-            for grade in eventForm.cleaned_data['grades']:
-                grade = int(grade)
-                event = Event()
-                event.name = eventForm.cleaned_data['name']
-                event.notify_date = eventForm.cleaned_data['notify_date']
-                event.period = eventForm.cleaned_data['period']
-                event.level = eventForm.cleaned_data['event_level']
-                event.event_priority = eventForm.cleaned_data['priority']
-                event.save()
-                for sub in eventForm.cleaned_data['subject']:
-                    event.subject.add(int(sub))
-                for prof in eventForm.cleaned_data['profile']:
-                    event.profile.add(int(prof))
-                event.event_grade = grade
-                try:
-                    event.next_event_id = int(eventForm.cleaned_data['next_event'])
-                except:
-                    print('Nope')
-                event.event_url = eventForm.cleaned_data['event_url']
-                event.description = eventForm.cleaned_data['description']
-                event.save()
-            return HttpResponse('Добавили')
-            pass
-        else:
-
-            return HttpResponse(eventForm.errors)
-            pass
-
+        return HttpResponse('Да ебись ты в рот')
     eventForm = EventForm()
 
     return render(request, 'test.html', {'form': eventForm})

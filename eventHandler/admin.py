@@ -18,7 +18,7 @@ class ProfileSubjectAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'notify_date', 'period', 'level', 'event_url', 'description')
+    list_display = ('id', 'name', 'notify_date', 'period', 'level', 'url', 'description')
     search_fields = ('name',)
 
 

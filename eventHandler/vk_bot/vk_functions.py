@@ -150,12 +150,13 @@ def make_distribution():
         for user in users:
             tg_users.add(user.tg_id)
             vk_users.add(user.vk_id)
-        message = f"""Олимпиада {event.name} для {str(event.event_grade)} класса
-по предметам {' '.join([x['name'] for x in event.subject.all().values('name')])} (профили:{' '.join([x['name'] for x in event.profile.all().values('name')])})
-Сроки проведения: {event.period}
-Уровень олимпиады: {event.level}
-Ссылка на сайт олимпиады: {event.event_url}
-Дополнительная информация: {event.description}"""
+        message = ""  # TODO: Изменить функцию для использования SubEvent'ов
+        #         f"""Олимпиада {event.name} для {str(event.event_grade)} класса
+        # по предметам {' '.join([x['name'] for x in event.subject.all().values('name')])} (профиль:{event.profile.name})
+        # Сроки проведения: {event.period}
+        # Уровень олимпиады: {event.level}
+        # Ссылка на сайт олимпиады: {event.url}
+        # Дополнительная информация: {event.description}"""
         send_info(vk_users, message, auth)
 
 
