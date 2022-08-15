@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Event, User, Profile, Question
+from .models import *
 
 
 # Логин: admin
@@ -37,3 +37,4 @@ admin.site.register(Profile, ProfileSubjectAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(SubEvent, SubEventAdmin)
