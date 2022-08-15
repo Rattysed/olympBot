@@ -133,5 +133,5 @@ def test(request):
 
 
 def bot_test(request):
-    make_distribution()
+    set_up_next_event(Event.objects.get(id=2))
     return HttpResponse('С кайфом')
