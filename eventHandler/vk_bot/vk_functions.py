@@ -71,6 +71,10 @@ keyboard_grades.add_line()
 keyboard_grades.add_button('9', color=VkKeyboardColor.SECONDARY)
 keyboard_grades.add_button('8', color=VkKeyboardColor.SECONDARY)
 
+keyboard_warning = VkKeyboard(one_time=False)
+keyboard_warning.add_button('Да', color=VkKeyboardColor.POSITIVE)
+keyboard_warning.add_button('Назад', color=VkKeyboardColor.NEGATIVE)
+
 
 def vk_write_message(sender, auth, message,
                      keyboard: VkKeyboard = None):  # функция отправки сообщения message пользователю sender
@@ -237,4 +241,9 @@ COMMANDS_DICT = {
                                                                " в стадии разработки, приходите сюда позже :)",
                             vk_keyboard=keyboard_menu),
     'приветствие': Command('hello', action=lambda: "Типо приветствие", vk_keyboard=keyboard_menu),
+    'предупреждение': Command('warning', action=lambda: "❗Внимание: при смене класса"
+                                                        " все ваши текущие настройки "
+                                                        "рассылки будут сброшены. "
+                                                        "Вы уверены, что хотите "
+                                                        "продолжить?", vk_keyboard=keyboard_warning),
 }

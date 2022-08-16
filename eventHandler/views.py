@@ -75,8 +75,8 @@ def vk_bot(request):
                     change_user_question(sender, QUESTIONS[3 + (body.lower() == 'убрать')])
                 elif body.lower() == 'сменить класс' \
                         and get_user_question(sender) == str(QUESTIONS[2]):
-                    change_user_question(sender, QUESTIONS[0])
-                    COMMANDS_DICT['сменить класс'].reply(sender, auth)
+                    change_user_question(sender, QUESTIONS[7])
+                    COMMANDS_DICT['предупреждение'].reply(sender, auth)
 
                 elif get_user_question(sender) == str(QUESTIONS[3]) \
                         or get_user_question(sender) == str(QUESTIONS[4]):
@@ -113,6 +113,16 @@ def vk_bot(request):
                                                                   chosen_option=(generate_list(DATA.subjects).index(
                                                                       str(get_user_chosen_subject(sender))) + 1),
                                                                   remove=True)
+
+                elif get_user_question(sender) == str(QUESTIONS[7]) \
+                        and body.lower() == 'да':
+                    change_user_question(sender, QUESTIONS[0])
+                    drop_events_of_user(sender)
+                    COMMANDS_DICT['сменить класс'].reply(sender, auth)
+                elif get_user_question(sender) == str(QUESTIONS[7]) \
+                        and body.lower() == 'назад':
+                    change_user_question(sender, QUESTIONS[2])
+                    COMMANDS_DICT['меню уведомлений'].reply(sender, auth)
 
                 else:
                     # change_user_question(sender, QUESTIONS[1])

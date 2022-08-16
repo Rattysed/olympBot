@@ -26,6 +26,12 @@ DATA = CollectedData()
 DATA.update_data()
 
 
+def drop_events_of_user(vk_id):
+    user = get_user(vk_id=vk_id)
+    user.events.clear()
+    user.save()
+
+
 def get_all_this_date(date) -> Union[QuerySet, List[Event]]:
     ev = Event.objects.filter(notify_date=date)
     return ev
