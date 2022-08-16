@@ -47,7 +47,7 @@ def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
 
 def get_subevents_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
     user = get_user(vk_id=vk_id)
-    subevents = SubEvent.objects.filter(main_event__subject=subject, grade=user.grade)
+    subevents = SubEvent.objects.filter(main_event__subject=subject, grade=user.grade, main_event__is_visible=True)
     # for subev in subevents:
     #     print(subev.name)  <----- это получение нормального блять названия саб ивента
     return subevents
