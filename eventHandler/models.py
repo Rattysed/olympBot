@@ -1,5 +1,7 @@
 import django.utils.timezone
 from django.db import models
+from django.contrib.auth.models import User as DjangoUser
+from django.contrib.auth.models import Permission
 
 
 class Subject(models.Model):  # предметы
@@ -81,8 +83,9 @@ class User(models.Model):
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
     events = models.ManyToManyField(SubEvent)
-    current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
+    current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True)
     chosen_option = models.ForeignKey(Subject, on_delete=models.SET_NULL, blank=True, null=True)
+    role = models.ForeignKey(DjangoUser, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"{self.vk_id} - {self.tg_id}"

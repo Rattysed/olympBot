@@ -11,6 +11,7 @@ SUCCESS = HttpResponse('ok', content_type='text/plain', status=200)
 SECRET_KEY_VK = os.environ['SECRET_KEY_VK']
 CONFIRMATION_TOKEN = os.environ['CONFIRMATION_TOKEN']
 TOKEN = os.environ['TOKEN']
+setup_db()
 
 
 @csrf_exempt
@@ -25,7 +26,7 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
-                update_db()
+                # update_db()
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
@@ -143,5 +144,4 @@ def test(request):
 
 
 def bot_test(request):
-    set_up_next_event(Event.objects.get(id=2))
     return HttpResponse('С кайфом')

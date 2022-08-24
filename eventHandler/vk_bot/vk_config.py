@@ -8,3 +8,7 @@ QUESTS = {
     'remove_event': 'Удалить ивент из рассылки',
     'warning_grades': 'Предупреждение о сбросе рассылки',
 }
+
+USERS = [
+    {'username': 'admin', 'password': '123'},
+]

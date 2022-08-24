@@ -2,7 +2,7 @@ import datetime
 from typing import Union, List
 from django.db.models import QuerySet
 from .models import *
-from eventHandler.vk_bot.vk_config import QUESTS
+from eventHandler.vk_bot.vk_config import *
 
 
 class CollectedData:
@@ -203,15 +203,27 @@ def remove_user_events(vk_id, chosen_option: int):
     user.save()
 
 
-def update_db():
-    i = 1
-    for q in QUESTS:
+def setup_db():
+    for i, q in enumerate(QUESTS):
         values = {
             'short_name': q,
             'full_name': QUESTS[q],
         }
-        Question.objects.update_or_create(id=i, defaults=values)
-        i += 1
+        Question.objects.update_or_create(id=i + 1, defaults=values)
+    sup = DjangoUser(username='admin', id=1)
+    sup.set_password('123')
+    sup.is_superuser = sup.is_staff = True
+    sup.save()
+    edik = DjangoUser(username='editor', id=2)
+    edik.set_password('123')
+    edik.is_staff = True
+    for tip in ('add', 'change', 'delete', 'view'):
+        for model in ('event', 'subevent', 'profile', 'subject'):
+            perm = Permission.objects.get_by_natural_key(f'{tip}_{model}', 'eventHandler', f'{model}').id
+            edik.user_permissions.add(perm)
+    edik.save()
+    pchel = DjangoUser(username='based', id=3)
+    pchel.save()
 
 
 if __name__ == '__main__':
