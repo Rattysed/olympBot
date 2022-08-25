@@ -33,8 +33,19 @@ def drop_events_of_user(vk_id):
 
 
 def get_all_this_date(date) -> Union[QuerySet, List[Event]]:
-    ev = Event.objects.filter(notify_date=date)
-    return ev
+    # ev = Event.objects.filter(notify_date=date)
+    subev = SubEvent.objects.filter(notify_date=date)
+    return subev
+
+
+def get_all_this_grade_today(grade):
+    subevs_by_grade = set()
+    subevents = get_all_today()
+    for sub in subevents:
+        print(sub.grade)
+        if sub.grade == grade:
+            subevs_by_grade.add(sub)
+    return subevs_by_grade
 
 
 def get_all_today() -> Union[QuerySet, List[Event]]:
@@ -55,7 +66,7 @@ def get_subevents_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[E
     user = get_user(vk_id=vk_id)
     subevents = SubEvent.objects.filter(main_event__subject=subject, grade=user.grade, main_event__is_visible=True)
     # for subev in subevents:
-    #     print(subev.name)  <----- это получение нормального блять названия саб ивента
+    #     print(subev.name)  <----- это получение нормального названия саб ивента
     return subevents
 
 

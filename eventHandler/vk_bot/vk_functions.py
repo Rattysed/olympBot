@@ -146,22 +146,22 @@ def test_action(vk_id='', tg_id=''):
 
 def make_distribution():
     auth = VkApi(token=TOKEN)
-    events = get_all_today()
-    for event in events:
-        users = event.user_set.all()
-        tg_users = set()
-        vk_users = set()
-        for user in users:
-            tg_users.add(user.tg_id)
-            vk_users.add(user.vk_id)
-        message = ""  # TODO: Изменить функцию для использования SubEvent'ов
-        #         f"""Олимпиада {event.name} для {str(event.event_grade)} класса
-        # по предметам {' '.join([x['name'] for x in event.subject.all().values('name')])} (профиль:{event.profile.name})
-        # Сроки проведения: {event.period}
-        # Уровень олимпиады: {event.level}
-        # Ссылка на сайт олимпиады: {event.url}
-        # Дополнительная информация: {event.description}"""
-        send_info(vk_users, message, auth)
+    for cur_grade in [11, 10, 9]:
+        subevents = get_all_this_grade_today(cur_grade)
+        for sub in subevents:
+            users = sub.user_set.all()
+            tg_users = set()
+            vk_users = set()
+            for user in users:
+                tg_users.add(user.tg_id)
+                vk_users.add(user.vk_id)
+            message = f"""Олимпиада "{sub.name}"\nКласс: {str(sub.grade)}
+            Сроки проведения: {sub.period}
+            Предметы: {' '.join([x['name'] for x in sub.main_event.subject.values('name')])}
+            Профиль: {sub.main_event.profile}
+            Уровень олимпиады: {sub.main_event.level}
+            Подробнее об олимпиаде: {sub.main_event.url}"""
+            send_info(vk_users, message, auth)
 
 
 def set_up_next_event(event: Event):
