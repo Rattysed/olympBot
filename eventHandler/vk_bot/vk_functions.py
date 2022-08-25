@@ -156,11 +156,11 @@ def make_distribution():
                 tg_users.add(user.tg_id)
                 vk_users.add(user.vk_id)
             message = f"""Олимпиада "{sub.name}"\nКласс: {str(sub.grade)}
-            Сроки проведения: {sub.period}
-            Предметы: {' '.join([x['name'] for x in sub.main_event.subject.values('name')])}
-            Профиль: {sub.main_event.profile}
-            Уровень олимпиады: {sub.main_event.level}
-            Подробнее об олимпиаде: {sub.main_event.url}"""
+Сроки проведения: {sub.period}
+Предметы: {' '.join([x['name'] for x in sub.main_event.subject.values('name')])}
+Профиль: {sub.main_event.profile}
+Уровень олимпиады: {sub.main_event.level}
+Подробнее об олимпиаде: {sub.main_event.url}"""
             send_info(vk_users, message, auth)
 
 
