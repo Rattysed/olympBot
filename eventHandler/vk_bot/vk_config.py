@@ -9,6 +9,26 @@ QUESTS = {
     'warning_grades': 'Предупреждение о сбросе рассылки',
 }
 
+COMMAND_ROLLBACK = [
+    {'current_question': 'what_grade', 'rollback_command': False, 'rollback_question': False},
+    {'current_question': 'main_menu', 'rollback_command': False, 'rollback_question': False},
+    {'current_question': 'notification_menu', 'rollback_command': False, 'rollback_question': False},
+    {'current_question': 'add_olymp', 'rollback_command': 'меню уведомлений',
+     'rollback_question': 'notification_menu'},
+
+    {'current_question': 'remove_olymp', 'rollback_command': 'меню уведомлений',
+     'rollback_question': 'notification_menu'},
+
+    {'current_question': 'toggle_event', 'rollback_command': 'изменить уведомления по предметам',
+     'rollback_question': 'add_olymp'},
+
+    {'current_question': 'remove_event', 'rollback_command': 'изменить уведомления по предметам',
+     'rollback_question': 'remove_olymp'},
+
+    {'current_question': 'warning_grades', 'rollback_command': 'меню уведомлений',
+     'rollback_question': 'notification_menu'},
+]
+
 USERS = [
     {'username': 'admin', 'password': '123'},
 ]

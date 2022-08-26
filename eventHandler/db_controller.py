@@ -79,7 +79,7 @@ def get_user(vk_id='', tg_id=''):
 
 def get_user_question(vk_id):
     user = get_user(vk_id=vk_id)
-    return str(user.current_question)
+    return user.current_question
 
 
 def get_user_chosen_subject(vk_id):
@@ -112,6 +112,15 @@ def get_events_of_user(vk_id):
     return events_of_user_sorted
 
 
+def get_current_rollback(sender):  # получение нужного словаря в списке COMMAND_ROLLBACK для кнопки "назад"
+    return list(filter(lambda item: item['current_question'] == str(get_user_question(sender)), COMMAND_ROLLBACK))
+
+
+def get_rollback_question(sender):
+    rollback_quest = get_current_rollback(sender)[0].get('rollback_question', False)
+    return rollback_quest
+
+
 def generate_list(data):
     listed = []
     [listed.append(str(x)) for x in data]
@@ -137,9 +146,13 @@ def change_user_grade(vk_id, grade):
     user.save()
 
 
-def change_user_question(vk_id, question):
+def change_user_question(vk_id, question, **kwargs):
     user = get_user(vk_id=vk_id)
-    user.current_question = question
+    flag = kwargs.get('is_string', False)
+    if flag:
+        user.current_question = Question.objects.get(short_name=str(question))
+    else:
+        user.current_question = question
     user.save()
 
 

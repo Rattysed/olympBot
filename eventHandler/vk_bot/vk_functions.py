@@ -48,6 +48,8 @@ keyboard_menu.add_button('🔕', color=VkKeyboardColor.SECONDARY)
 
 keyboard_send_menu = VkKeyboard(one_time=False)
 keyboard_send_menu.add_button('Меню', color=VkKeyboardColor.PRIMARY)
+keyboard_send_menu.add_line()
+keyboard_send_menu.add_button('Назад', color=VkKeyboardColor.SECONDARY)
 
 keyboard_choose = VkKeyboard(one_time=False)
 keyboard_choose.add_button('Математика', color=VkKeyboardColor.SECONDARY)
@@ -220,6 +222,12 @@ def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
                       ' Чтобы ее включить, перейдите ' \
                       'в меню и нажмите кнопку "🔔" \n\n'
         return output
+
+
+def is_empty_rollback_question(question):
+    if question is False:
+        return True
+    return False
 
 
 COMMANDS_DICT = {
