@@ -210,7 +210,7 @@ def setup_db():
             'full_name': QUESTS[q],
         }
         Question.objects.update_or_create(id=i + 1, defaults=values)
-    sup = DjangoUser(username='admin', id=1)
+    sup = DjangoUser(username='admin_2', id=555)
     sup.set_password('123')
     sup.is_superuser = sup.is_staff = True
     sup.save()

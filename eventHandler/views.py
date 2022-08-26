@@ -1,6 +1,7 @@
 import json
 import time
 import vk_api
+from eventHandler.utils import *
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import EventForm
@@ -144,4 +145,5 @@ def test(request):
 
 
 def bot_test(request):
+    get_olymps_from_rsosh()
     return HttpResponse('С кайфом')

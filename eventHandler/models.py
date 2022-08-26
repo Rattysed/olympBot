@@ -38,7 +38,6 @@ class Event(models.Model):  # События
     # event_priority = models.IntegerField('Насколько это событие отборочное', null=True)
     subject = models.ManyToManyField(Subject, blank=True)
     profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
-    # event_grade = models.IntegerField('Класс олимпиады', null=True)
     next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     url = models.URLField(max_length=160, default='https://')
     description = models.TextField('Доп. Информация', blank=True)
@@ -93,3 +92,11 @@ class User(models.Model):
     class Meta:
         verbose_name = 'Пользователи'
         verbose_name_plural = 'Пользователи'
+
+
+class RawEvent(models.Model):
+    name = models.CharField('Название', max_length=150)
+    url = models.URLField('Ссылка', max_length=160, default='https://')
+    profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
+    subject = models.ManyToManyField(Subject, blank=True)
+    level = models.IntegerField('Уровень олимпиады')
