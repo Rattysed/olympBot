@@ -12,7 +12,12 @@ BAN_WORDS = ['литература', 'дизайн', 'искусство', 'ки
              'политология', 'экология', 'психология', 'религиоведение',
              'рисунок', 'композиция', 'философия', 'филология', 'востоковедение',
              'музык', 'сольфеджио', 'дирижирование', 'генетика', 'культур', 'юриспруденц',
-             'теология', 'педагог', 'журналистика']
+             'теология', 'педагог', 'журналистика', 'география', 'право']
+
+BAN_NAMES = ['всероссийская',
+             'школьников',
+             'междисциплинарная',
+             '+сибирского+федерального+округа', ]
 
 
 def get_olymps_from_rsosh():
@@ -59,17 +64,32 @@ def get_olymps_from_rsosh():
         raw_event.save()
 
 
+def generate_search_name(name: str) -> str:
+    search_name = ''
+    for s in name:
+        if s.isalnum():
+            search_name += s.lower()
+        else:
+            search_name += '+'
+    for nam in BAN_NAMES:
+        search_name = search_name.replace(nam, '')
+
+    while '++' in search_name:
+        search_name = search_name.replace('++', '+')
+    if not search_name[-1].isalnum():
+        search_name = search_name[:-1]
+    if not search_name[0].isalnum():
+        search_name = search_name[0:]
+    return search_name
+
+
 def find_grades_of_event(event: RawEvent):
     if event.min_grade is not None:
         return
     # print(event.min_grade, event.min_grade is not None)
-    name: str = event.name
-    search_name = ''
-    for s in name:
-        if s.isalnum():
-            search_name += s
-        if s == ' ':
-            search_name += '+'
+    name = event.name
+    search_name = generate_search_name(name)
+
     # print(search_name)
     url = 'https://olimpiada.ru/search?q='
     response = requests.get(url + search_name, headers=UA)
@@ -77,10 +97,12 @@ def find_grades_of_event(event: RawEvent):
     try:
         grades = soup.find('span', class_='classes_dop').text.split()[0]
     except:
-        print('Ивент - говно, расходимся')
+        print(f'{search_name} - хуета')
         return
     min_grade = max(int(grades.split('–')[0]), 9)
-    max_grade = int(grades.split('–')[1])
+    max_grade = min_grade
+    if len(grades.split('-')) > 1:
+        max_grade = int(grades.split('–')[1])
     event.min_grade = min_grade
     event.max_grade = max_grade
     event.save()
