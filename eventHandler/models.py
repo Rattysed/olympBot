@@ -99,4 +99,6 @@ class RawEvent(models.Model):
     url = models.URLField('Ссылка', max_length=160, default='https://')
     profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
     subject = models.ManyToManyField(Subject, blank=True)
+    min_grade = models.IntegerField('Минимальный класс участия', null=True, blank=True)
+    max_grade = models.IntegerField('Максимальный класс участия', null=True, blank=True)
     level = models.IntegerField('Уровень олимпиады')

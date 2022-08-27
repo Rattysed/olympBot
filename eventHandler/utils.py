@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from eventHandler.models import *
+from typing import Tuple
 
 UA = {
     "User-Agent": 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML,'
@@ -56,6 +57,33 @@ def get_olymps_from_rsosh():
                 subject.save()
             raw_event.subject.add(subject)
         raw_event.save()
+
+
+def find_grades_of_event(event: RawEvent):
+    if event.min_grade is not None:
+        return
+    # print(event.min_grade, event.min_grade is not None)
+    name: str = event.name
+    search_name = ''
+    for s in name:
+        if s.isalnum():
+            search_name += s
+        if s == ' ':
+            search_name += '+'
+    # print(search_name)
+    url = 'https://olimpiada.ru/search?q='
+    response = requests.get(url + search_name, headers=UA)
+    soup = BeautifulSoup(response.text, 'lxml')
+    try:
+        grades = soup.find('span', class_='classes_dop').text.split()[0]
+    except:
+        print('Ивент - говно, расходимся')
+        return
+    min_grade = max(int(grades.split('–')[0]), 9)
+    max_grade = int(grades.split('–')[1])
+    event.min_grade = min_grade
+    event.max_grade = max_grade
+    event.save()
 
 
 if __name__ == '__main__':

@@ -145,5 +145,6 @@ def test(request):
 
 
 def bot_test(request):
-    get_olymps_from_rsosh()
+    # get_olymps_from_rsosh()
+    find_grades_of_event(RawEvent.objects.get(id=151))
     return HttpResponse('С кайфом')
