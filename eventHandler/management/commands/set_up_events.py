@@ -5,7 +5,7 @@ from eventHandler.utils import *
 
 
 class Command(BaseCommand):
-    help = "Сосёт олимпиады. Или просто сосёт."
+    help = "Единоразовое обновление олимпиад"
 
     def handle(self, *args, **options):
-        suck_from_olimpiada_sru()
+        get_from_olimiada_ru()

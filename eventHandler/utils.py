@@ -8,19 +8,19 @@ UA = {
                   ' like Gecko) Chrome/99.0.4844.51 Safari/537.36'
 }
 
+EVENT_SOURCE = 'https://olimpiada.ru/article/993'
+
 BAN_WORDS = ['дизайн', 'искусство', 'китайск', 'архитектура', 'восточны',
              'политология', 'психология', 'религиоведение', 'социология',
              'рисунок', 'композиция', 'философия', 'филология', 'востоковедение',
              'музык', 'сольфеджио', 'дирижирование', 'культур', 'юриспруденц',
-             'теология', 'педагог', 'журналистика', 'родной язык', 'литература']
+             'теология', 'педагог', 'журналистика', 'родной язык', ]
 
-BAN_NAMES = ['всероссийская',
-             'школьников',
-             'междисциплинарная',
-             '+сибирского+федерального+округа', ]
+BAN_NAMES = ['Филология', 'Дизайн', 'Искусство и изо', 'Музыка', 'Политология', 'Психология',
+             'Социология', 'Геология', ]
 
 
-def make_rawevent(name, link, profile, subjects, level):
+def make_rawevent(name, link, profile, level):
     ev_profile, created = Profile.objects.get_or_create(name=profile)
     if created:
         ev_profile.save()
@@ -29,31 +29,28 @@ def make_rawevent(name, link, profile, subjects, level):
         return
     new_event, created = RawEvent.objects.get_or_create(name=name, profile=ev_profile)
     if not created:
-        return
+        return new_event
     new_event.url = link
     new_event.level = level
-    new_event.save()
-    for s in subjects:
-        # print(s.lower())
-        if any(map(lambda x: x in s.lower(), BAN_WORDS)):
-            ev_profile.delete()
-            new_event.delete()
-            return
-        subject, created = Subject.objects.get_or_create(name=s)
-        if created:
-            subject.save()
-        new_event.subject.add(subject)
-    new_event.save()
+    return new_event
 
 
-def suck_from_olimpiada_sru():
-    url = 'https://olimpiada.ru/article/993'
+def get_from_olimiada_ru():
+    url = EVENT_SOURCE
     response = requests.get(url, headers=UA)
     soup = BeautifulSoup(response.text, 'lxml')
     tables = soup.find_all('table', class_="note_table")
+    first_table = soup.find('table', class_="note_table")
+    p_shki = first_table.find_next_siblings('p')
     for i, table in enumerate(tables):
         if not i:
             continue
+        sub = p_shki[i - 1].text
+        if sub in BAN_NAMES:
+            continue
+        subject, created = Subject.objects.get_or_create(name=sub)
+        if created:
+            subject.save()
         print(f'Пошла таблица {i} из {len(tables) - 1}')
         t_rows = table.find_all('tr')
         for j, row in enumerate(t_rows):
@@ -64,10 +61,14 @@ def suck_from_olimpiada_sru():
             name = row[0].find('p').text
             link = 'https://olimpiada.ru' + row[0].find('a')['href']
             profile = row[2].find('p').text
-            subjects = row[3].find('p').text.split(', ')
             level = int(row[4].find('p').text)
+            event = make_rawevent(name, link, profile, level)
+            if event is None:
+                continue
+            event.save()
+            event.subject.add(subject)
+            event.save()
 
-            make_rawevent(name, link, profile, subjects, level)
 
 
 if __name__ == '__main__':
