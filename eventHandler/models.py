@@ -101,4 +101,4 @@ class RawEvent(models.Model):
     subject = models.ManyToManyField(Subject, blank=True)
     min_grade = models.IntegerField('Минимальный класс участия', null=True, blank=True)
     max_grade = models.IntegerField('Максимальный класс участия', null=True, blank=True)
-    level = models.IntegerField('Уровень олимпиады')
+    level = models.IntegerField('Уровень олимпиады', null=True, blank=True)
