@@ -1,7 +1,6 @@
 from vk_api.utils import get_random_id
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from eventHandler.db_controller import *
-from typing import List, Union
 from vk_api import VkApi
 import os
 
@@ -19,11 +18,7 @@ class Command:
     def reply(self, sender, auth, vk=True, **kwargs):
         # TODO: Логгирование прям здесь
         message = ''
-        print(kwargs)
-        print(kwargs.get('toggle_start', False))
-        if kwargs.get('huynya_ebanaya', False):
-            pass
-        elif kwargs.get('toggle_start', False):
+        if kwargs.get('toggle_start', False):
             if kwargs.get('remove', False):
                 message = self.action(sender, kwargs.get('chosen_option', -1), remove=True)
             else:
@@ -127,7 +122,7 @@ def show_distributions(sender):
         output = 'Рассылок нет.'
     for sub in DATA.subjects[:]:
         evs = events_of_user.get(sub.name, [])
-        print(evs)
+        # print(evs)
         if len(evs) == 0:
             continue
         output += f'{sub.name}:\n'
@@ -164,27 +159,6 @@ def make_distribution():
 Уровень олимпиады: {sub.main_event.level}
 Подробнее об олимпиаде: {sub.main_event.url}"""
             send_info(vk_users, message, auth)
-
-
-def set_up_next_event(event: Event):
-    if event.next_event_id is None:
-        return
-    sub_events = event.subevent_set.all()
-    grade_to_event = dict()
-    for ev in sub_events:
-        grade_to_event[ev.grade] = ev
-    next_event = event.next_event_id
-    next_sub_events = next_event.subevent_set.all()
-    for ev in next_sub_events:
-        last_ev = grade_to_event.get(ev.grade, None)
-        if last_ev is None:
-            continue  # TODO: Придумать, что делать, когда нет нужного эвента под класс
-        for user in last_ev.user_set.all():
-            ev.user_set.add(user)
-    event.is_visible = False
-    next_event.is_visible = True
-    event.save()
-    next_event.save()
 
 
 def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
@@ -225,9 +199,7 @@ def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
 
 
 def is_empty_rollback_question(question):
-    if question is False:
-        return True
-    return False
+    return not question
 
 
 COMMANDS_DICT = {

@@ -122,9 +122,7 @@ def get_rollback_question(sender):
 
 
 def generate_list(data):
-    listed = []
-    [listed.append(str(x)) for x in data]
-    return listed
+    return [str(x) for x in data]
 
 
 def is_user_in_database(tg_id='', vk_id=''):
@@ -225,6 +223,27 @@ def remove_user_events(vk_id, chosen_option: int):
     events = list(get_events_by_subject(subject))
     user.events.remove(events[chosen_option - 1])
     user.save()
+
+
+def set_up_next_event(event: Event):
+    if event.next_event_id is None:
+        return
+    sub_events = event.subevent_set.all()
+    grade_to_event = dict()
+    for ev in sub_events:
+        grade_to_event[ev.grade] = ev
+    next_event = event.next_event_id
+    next_sub_events = next_event.subevent_set.all()
+    for ev in next_sub_events:
+        last_ev = grade_to_event.get(ev.grade, None)
+        if last_ev is None:
+            continue  # TODO: Придумать, что делать, когда нет нужного эвента под класс
+        for user in last_ev.user_set.all():
+            ev.user_set.add(user)
+    event.is_visible = False
+    next_event.is_visible = True
+    event.save()
+    next_event.save()
 
 
 def setup_db():
