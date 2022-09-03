@@ -28,7 +28,7 @@ def vk_bot(request):
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
             elif data['type'] == 'message_new':
-                print(get_all_this_grade_today(11))
+                # print(get_all_this_grade_today(11))
                 if time.time() - data['object']['message']['date'] >= 60:
                     return SUCCESS
                 auth = vk_api.VkApi(token=TOKEN)
@@ -90,7 +90,7 @@ def vk_bot(request):
 
                 elif str(get_user_question(sender)) == str(QUESTIONS[3]) \
                         or str(get_user_question(sender)) == str(QUESTIONS[4]):
-                    print(get_subevents_by_subject_and_grade(sender, get_user_chosen_subject(sender)))
+                    print('........', get_events_by_subject_and_grade(sender, get_user_chosen_subject(sender)))
                     if not 1 <= int(body.lower()) <= len(DATA.subjects):
                         COMMANDS_DICT['failure'].reply(sender, auth)
                     else:
@@ -154,5 +154,5 @@ def test(request):
 
 def bot_test(request):
     # get_olymps_from_rsosh()
-    find_grades_of_event(RawEvent.objects.get(id=151))
+    # find_grades_of_event(RawEvent.objects.get(id=151))
     return HttpResponse('С кайфом')
