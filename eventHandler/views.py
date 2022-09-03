@@ -34,7 +34,7 @@ def vk_bot(request):
                 auth = vk_api.VkApi(token=TOKEN)
                 sender = str(data['object']['message']['from_id'])
                 body = data['object']['message']['text']
-                print(get_main_events_of_user(sender))
+                # print(get_main_events_of_user(sender))
 
                 if not is_user_in_database(vk_id=sender):
                     create_new_vk_user(sender, None)

@@ -93,7 +93,7 @@ def get_main_events_of_user(vk_id):
     mains = []
     events = user.events.all()
     for ev in events:
-        all_mains = ev.raw_event_set.all()
+        all_mains = ev.event_set.all()
         for main in all_mains:
             mains.append(main)
     print(mains)
