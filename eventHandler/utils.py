@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from eventHandler.models import *
 from typing import Tuple
+import datetime
 
 UA = {
     "User-Agent": 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML,'
@@ -18,6 +19,24 @@ BAN_WORDS = ['дизайн', 'искусство', 'китайск', 'архит
 
 BAN_NAMES = ['Филология', 'Дизайн', 'Искусство и изо', 'Музыка', 'Политология', 'Психология',
              'Социология', 'Геология', ]
+
+CUR_STUDY_YEAR = datetime.date.today().year  # Год начала текущего учебного года
+if datetime.date.today().month < 6:
+    CUR_STUDY_YEAR -= 1
+MONTH_TO_DATE = {
+    'янв': datetime.date(CUR_STUDY_YEAR + 1, 1, 1),
+    'фев': datetime.date(CUR_STUDY_YEAR + 1, 2, 1),
+    'мар': datetime.date(CUR_STUDY_YEAR + 1, 3, 1),
+    'апр': datetime.date(CUR_STUDY_YEAR + 1, 4, 1),
+    'май': datetime.date(CUR_STUDY_YEAR + 1, 5, 1),
+    'июн': datetime.date(CUR_STUDY_YEAR, 6, 1),
+    'июл': datetime.date(CUR_STUDY_YEAR, 7, 1),
+    'авг': datetime.date(CUR_STUDY_YEAR, 8, 1),
+    'сен': datetime.date(CUR_STUDY_YEAR, 9, 1),
+    'окт': datetime.date(CUR_STUDY_YEAR, 10, 1),
+    'ноя': datetime.date(CUR_STUDY_YEAR, 11, 1),
+    'дек': datetime.date(CUR_STUDY_YEAR, 12, 1),
+}
 
 
 def make_rawevent(name, link, profile, level):
@@ -69,6 +88,38 @@ def get_from_olimiada_ru():
             event.subject.add(subject)
             event.save()
 
+
+def get_event_data(event: RawEvent):
+    response = requests.get(event.url)
+    soup = BeautifulSoup(response.text, 'lxml')
+    events_table = soup.find('table', class_='events_for_activity')
+    grades = soup.find('span', class_='classes_types_a').text
+    nums = grades.split()[0]
+    try:
+        min_grade = max(int(nums.split('–')[0]), 9)
+        max_grade = int(nums.split('–')[1])
+    except:
+        min_grade = max_grade = int(nums)
+    event.min_grade = min_grade
+    event.max_grade = max_grade
+    event.save()
+
+    if events_table is not None:
+        event_rows = events_table.find_all('tr', class_='notgreyclass')
+        for row in event_rows:
+            name = row.find('div', class_='event_name').text
+            date = list(row)[1].text
+            if '...' in date:
+                start, finish = date.split('...')
+            else:
+                start = date
+                finish = False
+            start_month, start_day = start.split()
+            start_date = MONTH_TO_DATE[start_month.lower()] + datetime.timedelta(days=int(start_day) - 2)
+            start_event = Event(name=name, )
+            if finish:
+                finish_month, finish_day = finish.split()
+                finish_date = MONTH_TO_DATE[finish_month.lower()] + datetime.timedelta(days=int(finish_day) - 2)
 
 
 if __name__ == '__main__':

@@ -28,19 +28,31 @@ class Profile(models.Model):  # предметы
         ordering = ['name']
 
 
+class RawEvent(models.Model):
+    name = models.CharField('Название', max_length=150)
+    url = models.URLField('Ссылка', max_length=160, default='https://')
+    profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
+    subject = models.ManyToManyField(Subject, blank=True)
+    min_grade = models.IntegerField('Минимальный класс участия', null=True, blank=True)
+    max_grade = models.IntegerField('Максимальный класс участия', null=True, blank=True)
+    level = models.IntegerField('Уровень олимпиады', null=True, blank=True)
+    description = models.CharField('Описание олимпиады', max_length=500, null=True, blank=True)
+
+
 class Event(models.Model):  # События
     name = models.CharField('Название', max_length=100)
     notify_date = models.DateField('Дата напоминания', blank=True, default=django.utils.timezone.now)
-    period = models.CharField('Сроки проведения', max_length=50)
+    period = models.CharField('Сроки проведения', max_length=50, null=True)
     level = models.PositiveSmallIntegerField(
-        'Уровень олимпиады', default=2, help_text='Значение от 1 до 3'
+        'Уровень олимпиады', default=2, help_text='Значение от 1 до 3', null=True
     )
+    raw_event = models.ForeignKey(RawEvent, blank=True, on_delete=models.SET_NULL, null=True)
     # event_priority = models.IntegerField('Насколько это событие отборочное', null=True)
     subject = models.ManyToManyField(Subject, blank=True)
     profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
     next_event_id = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     url = models.URLField(max_length=160, default='https://')
-    description = models.TextField('Доп. Информация', blank=True)
+    description = models.TextField('Доп. Информация', blank=True, null=True)
     is_visible = models.BooleanField('Отображение в текущих списках', default=False, blank=True)
 
     def __str__(self):
@@ -92,13 +104,3 @@ class User(models.Model):
     class Meta:
         verbose_name = 'Пользователи'
         verbose_name_plural = 'Пользователи'
-
-
-class RawEvent(models.Model):
-    name = models.CharField('Название', max_length=150)
-    url = models.URLField('Ссылка', max_length=160, default='https://')
-    profile = models.ForeignKey(Profile, blank=True, on_delete=models.SET_NULL, null=True)
-    subject = models.ManyToManyField(Subject, blank=True)
-    min_grade = models.IntegerField('Минимальный класс участия', null=True, blank=True)
-    max_grade = models.IntegerField('Максимальный класс участия', null=True, blank=True)
-    level = models.IntegerField('Уровень олимпиады', null=True, blank=True)
