@@ -36,7 +36,8 @@ class RawEvent(models.Model):
     min_grade = models.IntegerField('Минимальный класс участия', null=True, blank=True)
     max_grade = models.IntegerField('Максимальный класс участия', null=True, blank=True)
     level = models.IntegerField('Уровень олимпиады', null=True, blank=True)
-    description = models.CharField('Описание олимпиады', max_length=500, null=True, blank=True)
+    description = models.TextField('Описание Олимпиады', blank=True, null=True)
+    is_finished = models.BooleanField('Завершена ли олимпиада', blank=True, default=False)
 
 
 class Event(models.Model):  # События
