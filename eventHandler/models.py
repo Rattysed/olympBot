@@ -93,7 +93,7 @@ class User(models.Model):
     grade = models.IntegerField('Класс пользователя', null=True)
     is_subscription = models.BooleanField('Подписка', default=False)
     end_of_subscription = models.DateField('Дата окончания подписки', null=True)
-    events = models.ManyToManyField(SubEvent)
+    events = models.ManyToManyField(RawEvent)
     current_question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True)
     chosen_option = models.ForeignKey(Subject, on_delete=models.SET_NULL, blank=True, null=True)
     role = models.ForeignKey(DjangoUser, on_delete=models.SET_NULL, blank=True, null=True)

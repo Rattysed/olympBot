@@ -32,20 +32,20 @@ def drop_events_of_user(vk_id):
     user.save()
 
 
-def get_all_this_date(date) -> Union[QuerySet, List[Event]]:
-    # ev = Event.objects.filter(notify_date=date)
-    subev = SubEvent.objects.filter(notify_date=date)
-    return subev
+def get_all_this_date(date) -> Union[QuerySet, List[RawEvent]]:
+    ev = Event.objects.filter(notify_date=date).values('raw_event')
+    # ev = RawEvent.objects.filter(notify_date=date)
+    return ev
 
 
 def get_all_this_grade_today(grade):
-    subevs_by_grade = set()
-    subevents = get_all_today()
-    for sub in subevents:
+    evs_by_grade = set()
+    events = get_all_today()
+    for sub in events:
         print(sub.grade)
         if sub.grade == grade:
-            subevs_by_grade.add(sub)
-    return subevs_by_grade
+            evs_by_grade.add(sub)
+    return evs_by_grade
 
 
 def get_all_today() -> Union[QuerySet, List[Event]]:
@@ -58,16 +58,16 @@ def get_subjects() -> Union[QuerySet, List[Event]]:
 
 
 def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
-    events = Event.objects.filter(subject=subject)
+    events = RawEvent.objects.filter(subject=subject)
     return events
 
 
-def get_subevents_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
+def get_events_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
     user = get_user(vk_id=vk_id)
-    subevents = SubEvent.objects.filter(main_event__subject=subject, grade=user.grade, main_event__is_visible=True)
+    events = RawEvent.objects.filter(subject=subject, min_grade__lte=user.grade, max_grade__gte=user.grade, is_finished=False)
     # for subev in subevents:
     #     print(subev.name)  <----- это получение нормального названия саб ивента
-    return subevents
+    return events
 
 
 def get_user(vk_id='', tg_id=''):
@@ -92,7 +92,9 @@ def get_main_events_of_user(vk_id):
     mains = []
     events = user.events.all()
     for ev in events:
-        mains.append(ev.main_event)
+        all_mains = ev.raw_event_set.all()
+        for main in all_mains:
+            mains.append(main)
     print(mains)
     return mains
 
@@ -102,8 +104,8 @@ def get_events_of_user(vk_id):
     user = get_user(vk_id=vk_id)
     subjects = list(get_subjects())
     for sub in subjects:
-        sub_events = get_subevents_by_subject_and_grade(vk_id, sub)
-        for ev in sub_events:
+        events = get_events_by_subject_and_grade(vk_id, sub)
+        for ev in events:
 
             if ev in user.events.all():
                 if not events_of_user_sorted.get(sub.name, False):
@@ -157,7 +159,7 @@ def change_user_question(vk_id, question, **kwargs):
 def change_user_events(vk_id, chosen_option: int):
     user = get_user(vk_id=vk_id)
     subject = user.chosen_option
-    events = list(get_subevents_by_subject_and_grade(vk_id, subject))
+    events = list(get_events_by_subject_and_grade(vk_id, subject))
     if chosen_option == 1:
         for ev in events:
             user.events.add(ev)
@@ -226,6 +228,7 @@ def remove_user_events(vk_id, chosen_option: int):
 
 
 def set_up_next_event(event: Event):
+    return
     if event.next_event_id is None:
         return
     sub_events = event.subevent_set.all()
@@ -261,7 +264,7 @@ def setup_db():
     edik.set_password('123')
     edik.is_staff = True
     for tip in ('add', 'change', 'delete', 'view'):
-        for model in ('event', 'subevent', 'profile', 'subject'):
+        for model in ('event', 'rawevent', 'profile', 'subject'):
             perm = Permission.objects.get_by_natural_key(f'{tip}_{model}', 'eventHandler', f'{model}').id
             edik.user_permissions.add(perm)
     edik.save()
