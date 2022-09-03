@@ -116,10 +116,16 @@ def get_event_data(event: RawEvent):
                 finish = False
             start_month, start_day = start.split()
             start_date = MONTH_TO_DATE[start_month.lower()] + datetime.timedelta(days=int(start_day) - 2)
-            start_event = Event(name=name, )
+            start_event = Event(name=name, notify_date=start_date, url=event.url,
+                                description=event.description)
             if finish:
                 finish_month, finish_day = finish.split()
                 finish_date = MONTH_TO_DATE[finish_month.lower()] + datetime.timedelta(days=int(finish_day) - 2)
+                finish_event = Event(name="Конец события " + name, notify_date=finish_date, url=event.url,
+                                     description=event.description)
+                finish_event.save()
+                start_event.next_event_id = finish_event
+            start_event.save()
 
 
 if __name__ == '__main__':
