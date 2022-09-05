@@ -103,29 +103,59 @@ def get_event_data(event: RawEvent):
     event.min_grade = min_grade
     event.max_grade = max_grade
     event.save()
-
+    print(event.name)
+    last_ev = None
     if events_table is not None:
         event_rows = events_table.find_all('tr', class_='notgreyclass')
         for row in event_rows:
-            name = row.find('div', class_='event_name').text
-            date = list(row)[1].text
+            row = list(row.find_all('a'))
+            name = row[0].text
+            date = row[1].text
+            if 'до' in date.lower() or 'junior' in name.lower():
+                continue
+            print(date, list(row))
             if '...' in date:
                 start, finish = date.split('...')
             else:
                 start = date
                 finish = False
-            start_month, start_day = start.split()
+            try:
+                start_day, start_month = start.split()
+            except:
+                finish_day, finish_month = finish.split()
+                start_day = start
+                start_month = finish_month
             start_date = MONTH_TO_DATE[start_month.lower()] + datetime.timedelta(days=int(start_day) - 2)
-            start_event = Event(name=name, notify_date=start_date, url=event.url,
-                                description=event.description)
+            start_event, s_c = Event.objects.get_or_create(name=name, notify_date=start_date, url=event.url,
+                                                           description=event.description)
+            start_event.save()
+            if last_ev is not None:
+                last_ev.next_event_id = start_event
+                last_ev.save()
+            last_ev = start_event
             if finish:
-                finish_month, finish_day = finish.split()
+                finish_day, finish_month = finish.split()
                 finish_date = MONTH_TO_DATE[finish_month.lower()] + datetime.timedelta(days=int(finish_day) - 2)
-                finish_event = Event(name="Конец события " + name, notify_date=finish_date, url=event.url,
-                                     description=event.description)
+                finish_event, f_c = Event.objects.get_or_create(name="Конец события " + name, notify_date=finish_date,
+                                                                url=event.url,
+                                                                description=event.description)
                 finish_event.save()
                 start_event.next_event_id = finish_event
+                last_ev = finish_event
             start_event.save()
+
+
+def add_rawevents_data():
+    events = RawEvent.objects.filter()
+    for num, ev in enumerate(events):
+        # if num >15:
+        #     break
+        # if num < 15:
+        #     continue
+        print(f"{num + 1}/{len(events)}")
+        get_event_data(ev)
+
+    pass
 
 
 if __name__ == '__main__':

@@ -64,7 +64,7 @@ def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
 
 def get_events_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
     user = get_user(vk_id=vk_id)
-    events = RawEvent.objects.filter(subject=subject, min_grade__lte=user.grade, max_grade__gte=user.grade,
+    events = RawEvent.objects.filter(subject=subject, min_grade__gte=user.grade, max_grade__lte=user.grade,
                                      is_finished=False)
     # for subev in subevents:
     #     print(subev.name)  <----- это получение нормального названия саб ивента

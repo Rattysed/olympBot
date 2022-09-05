@@ -8,4 +8,5 @@ class Command(BaseCommand):
     help = "Единоразовое обновление олимпиад"
 
     def handle(self, *args, **options):
-        get_from_olimiada_ru()
+        # get_from_olimiada_ru()
+        add_rawevents_data()
