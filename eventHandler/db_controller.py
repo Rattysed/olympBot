@@ -32,20 +32,19 @@ def drop_events_of_user(vk_id):
     user.save()
 
 
-def get_all_this_date(date) -> Union[QuerySet, List[RawEvent]]:
-    ev = Event.objects.filter(notify_date=date).values('raw_event')
-    # ev = RawEvent.objects.filter(notify_date=date)
+def get_all_this_date(date) -> Union[QuerySet, List[Event]]:
+    ev = Event.objects.filter(notify_date=date)
     return ev
 
 
-def get_all_this_grade_today(grade):
-    evs_by_grade = set()
-    events = get_all_today()
-    for sub in events:
-        print(sub.grade)
-        if sub.grade == grade:
-            evs_by_grade.add(sub)
-    return evs_by_grade
+# def get_all_this_grade_today(grade):
+#     evs_by_grade = set()
+#     events = get_all_today()
+#     for sub in events:
+#         print(sub.grade)
+#         if sub.grade == grade:
+#             evs_by_grade.add(sub)
+#     return evs_by_grade
 
 
 def get_all_today() -> Union[QuerySet, List[Event]]:
@@ -64,7 +63,8 @@ def get_events_by_subject(subject) -> Union[QuerySet, List[Event]]:
 
 def get_events_by_subject_and_grade(vk_id, subject) -> Union[QuerySet, List[Event]]:
     user = get_user(vk_id=vk_id)
-    events = RawEvent.objects.filter(subject=subject, min_grade__gte=user.grade, max_grade__lte=user.grade,
+    print('\t\t', subject, user.grade)
+    events = RawEvent.objects.filter(subject=subject, min_grade__lte=user.grade, max_grade__gte=user.grade,
                                      is_finished=False)
     # for subev in subevents:
     #     print(subev.name)  <----- это получение нормального названия саб ивента
@@ -229,21 +229,9 @@ def remove_user_events(vk_id, chosen_option: int):
 
 
 def set_up_next_event(event: Event):
-    return
     if event.next_event_id is None:
         return
-    sub_events = event.subevent_set.all()
-    grade_to_event = dict()
-    for ev in sub_events:
-        grade_to_event[ev.grade] = ev
     next_event = event.next_event_id
-    next_sub_events = next_event.subevent_set.all()
-    for ev in next_sub_events:
-        last_ev = grade_to_event.get(ev.grade, None)
-        if last_ev is None:
-            continue  # TODO: Придумать, что делать, когда нет нужного эвента под класс
-        for user in last_ev.user_set.all():
-            ev.user_set.add(user)
     event.is_visible = False
     next_event.is_visible = True
     event.save()

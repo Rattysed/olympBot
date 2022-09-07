@@ -107,7 +107,7 @@ def get_event_data(event: RawEvent):
     last_ev = None
     if events_table is not None:
         event_rows = events_table.find_all('tr', class_='notgreyclass')
-        for row in event_rows:
+        for num, row in enumerate(event_rows):
             row = list(row.find_all('a'))
             name = row[0].text
             date = row[1].text
@@ -128,6 +128,8 @@ def get_event_data(event: RawEvent):
             start_date = MONTH_TO_DATE[start_month.lower()] + datetime.timedelta(days=int(start_day) - 2)
             start_event, s_c = Event.objects.get_or_create(name=name, notify_date=start_date, url=event.url,
                                                            description=event.description)
+            start_event.is_visible = not bool(num)
+            start_event.raw_event = event
             start_event.save()
             if last_ev is not None:
                 last_ev.next_event_id = start_event
@@ -139,6 +141,7 @@ def get_event_data(event: RawEvent):
                 finish_event, f_c = Event.objects.get_or_create(name="Конец события " + name, notify_date=finish_date,
                                                                 url=event.url,
                                                                 description=event.description)
+                finish_event.raw_event = event
                 finish_event.save()
                 start_event.next_event_id = finish_event
                 last_ev = finish_event
@@ -148,10 +151,10 @@ def get_event_data(event: RawEvent):
 def add_rawevents_data():
     events = RawEvent.objects.filter()
     for num, ev in enumerate(events):
-        # if num >15:
+        # if num > 3:
         #     break
-        # if num < 15:
-        #     continue
+        if num < 23:
+            continue
         print(f"{num + 1}/{len(events)}")
         get_event_data(ev)
 

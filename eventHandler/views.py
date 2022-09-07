@@ -21,9 +21,9 @@ def vk_bot(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         if data['secret'] == SECRET_KEY_VK:
-            print(data['type'])
-            print(data)
-            print(QUESTIONS)
+            # print(data['type'])
+            # print(data)
+            # print(QUESTIONS)
             if data['type'] == 'confirmation':
                 return HttpResponse(CONFIRMATION_TOKEN, content_type='text/plain', status=200)
 
@@ -155,4 +155,5 @@ def test(request):
 def bot_test(request):
     # get_olymps_from_rsosh()
     # find_grades_of_event(RawEvent.objects.get(id=151))
+    set_up_next_event(Event.objects.get(id=5))
     return HttpResponse('С кайфом')

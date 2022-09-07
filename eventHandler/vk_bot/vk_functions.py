@@ -111,7 +111,7 @@ def subject_notification():
 
 def show_distributions(sender):
     events_of_user = get_events_of_user(sender)
-    print(events_of_user)
+    # print(events_of_user)
     is_dist = is_distribution(sender)
     output = 'Ваши рассылки:\n\n'
     if not is_dist:
@@ -143,29 +143,34 @@ def test_action(vk_id='', tg_id=''):
 
 def make_distribution():
     auth = VkApi(token=TOKEN)
-    for cur_grade in [11, 10, 9]:
-        events = get_all_this_grade_today(cur_grade)
-        for sub in events:
-            users = sub.user_set.all()
-            tg_users = set()
-            vk_users = set()
-            for user in users:
-                tg_users.add(user.tg_id)
-                vk_users.add(user.vk_id)
-            message = ''
-# f"""Олимпиада "{sub.name}"\nКласс: {str(sub.grade)}
-# Сроки проведения: {sub.period}
-# Предметы: {' '.join([x['name'] for x in sub.main_event.subject.values('name')])}
-# Профиль: {sub.main_event.profile}
-# Уровень олимпиады: {sub.main_event.level}
-# Подробнее об олимпиаде: {sub.main_event.url}"""
-            send_info(vk_users, message, auth)
+    events = get_all_today()
+    events_of_user = dict()
+    for ev in events:
+        users = ev.raw_event.user_set.all()
+        for user in users:
+            if not events_of_user.get(user.vk_id, False):
+                events_of_user[user.vk_id] = []
+            events_of_user[user.vk_id].append(ev)
+    for vk_id in events_of_user.keys():
+        events = events_of_user[vk_id]
+
+        message = f'У вас {len(events)} уведомлений об олимпиадах:\n\n'
+        for num, event in enumerate(events):
+            message += f"""{num + 1}. Событие {event.name} для {event.raw_event.name}\n"""
+        # f"""Олимпиада "{sub.name}"\nКласс: {str(sub.grade)}
+        # Сроки проведения: {sub.period}
+        # Предметы: {' '.join([x['name'] for x in sub.main_event.subject.values('name')])}
+        # Профиль: {sub.main_event.profile}
+        # Уровень олимпиады: {sub.main_event.level}
+        # Подробнее об олимпиаде: {sub.main_event.url}"""
+        vk_write_message(vk_id, auth, message)
 
 
 def toggle_distribution(user_id: int, chosen_subject: int, **kwargs):
     user = get_user(vk_id=str(user_id))
     subject = DATA.subjects[chosen_subject - 1]
     events = get_events_by_subject_and_grade(str(user_id), subject)
+    print(subject, events)
     is_remove = kwargs.get('remove', False)
     if not is_remove:
         output = "Выберите вариант из предложенных:\n\n1) Включить все\n2) Выключить все\n"

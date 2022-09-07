@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def my_job():
     print('Писька')
     # DATA.update_data()
-    setup_db()
+    # setup_db()
     make_distribution()
     pass
 
